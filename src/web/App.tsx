@@ -1,5 +1,5 @@
 import { BookOpen, Brain, Coffee, GitBranch, MessageCircle, Music2 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { createSoundscape } from "./soundscape";
 
 interface SessionResponse {
@@ -26,8 +26,11 @@ export function App() {
   const [wrapNote, setWrapNote] = useState("I stayed with one small thread today.");
   const [soundOn, setSoundOn] = useState(false);
   const [soundscape] = useState(() => createSoundscape());
+  const hasStartedSession = useRef(false);
 
   useEffect(() => {
+    if (hasStartedSession.current) return;
+    hasStartedSession.current = true;
     fetch(`${apiBase}/api/session/start`, { method: "POST" })
       .then((res) => res.json())
       .then(setSession)
