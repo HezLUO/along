@@ -1,4 +1,8 @@
+import fs from "node:fs/promises";
+import os from "node:os";
+import path from "node:path";
 import { describe, expect, it } from "vitest";
+import { MemoryStore } from "../../src/core/memory-store";
 import { getGlobalAlongDir, getProjectAlongDir } from "../../src/core/paths";
 
 describe("Along memory paths", () => {
@@ -8,5 +12,21 @@ describe("Along memory paths", () => {
 
   it("uses the supplied home directory for global memory", () => {
     expect(getGlobalAlongDir("/Users/example")).toBe("/Users/example/.along");
+  });
+});
+
+describe("memory store", () => {
+  it("initializes readable project and global memory", async () => {
+    const root = await fs.mkdtemp(path.join(os.tmpdir(), "along-memory-"));
+    const repo = path.join(root, "repo");
+    const home = path.join(root, "home");
+    await fs.mkdir(repo);
+    await fs.mkdir(home);
+
+    const store = new MemoryStore(repo, home);
+    await store.ensureInitialized();
+
+    await expect(fs.readFile(path.join(repo, ".along", "companion.md"), "utf8")).resolves.toContain("Along");
+    await expect(fs.readFile(path.join(home, ".along", "companion-profile.md"), "utf8")).resolves.toContain("learns along");
   });
 });
