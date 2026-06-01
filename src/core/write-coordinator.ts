@@ -50,7 +50,7 @@ export class WriteCoordinator {
     ));
   }
 
-  async appendJsonLine(filePath: string, value: Record<string, unknown>): Promise<void> {
+  async appendJsonLine(filePath: string, value: unknown): Promise<void> {
     return this.runExclusiveFileWrite(filePath, () => (
       this.runWithRuntimeLockIfNeeded("append-json-line", () => this.appendJsonLineUnlocked(filePath, value))
     ));
@@ -113,11 +113,13 @@ export class WriteCoordinator {
     }
   }
 
-  private async appendJsonLineUnlocked(filePath: string, value: Record<string, unknown>): Promise<void> {
+  private async appendJsonLineUnlocked(filePath: string, value: unknown): Promise<void> {
     await fs.mkdir(path.dirname(filePath), { recursive: true });
-    const key = typeof value.idempotencyKey === "string" ? value.idempotencyKey : undefined;
+    const key = this.getIdempotencyKey(value);
     if (key && await this.hasJsonLineWithKey(filePath, key)) return;
-    await fs.appendFile(filePath, `${JSON.stringify(value)}\n`);
+    const serialized = JSON.stringify(value);
+    if (serialized === undefined) throw new Error("Value is not JSON serializable");
+    await fs.appendFile(filePath, `${serialized}\n`);
   }
 
   private isInsideRuntimeLock(): boolean {
@@ -250,6 +252,12 @@ export class WriteCoordinator {
     } catch {
       return false;
     }
+  }
+
+  private getIdempotencyKey(value: unknown): string | undefined {
+    if (typeof value !== "object" || value === null || !("idempotencyKey" in value)) return undefined;
+    const key = (value as { idempotencyKey?: unknown }).idempotencyKey;
+    return typeof key === "string" ? key : undefined;
   }
 
   private async recoverStaleLockIfNeeded(lockPath: string): Promise<boolean> {
