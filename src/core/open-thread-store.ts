@@ -89,9 +89,10 @@ export class OpenThreadStore {
     await this.updateThreads((threads) => {
       const thread = this.requireThreadFrom(threads, threadId);
       const history = this.upsertDelegationHistory(thread, delegation);
+      const effectiveDelegation = this.requireDelegationFrom(history, delegation.delegationId);
       nextThread = {
         ...thread,
-        status: this.statusForDelegation(delegation),
+        status: this.statusForDelegation(effectiveDelegation),
         delegationHistory: history,
         updatedAt: maxIsoTimestamp(thread.updatedAt, updatedAt),
       };
@@ -160,6 +161,9 @@ export class OpenThreadStore {
 
   private upsertDelegationHistory(thread: OpenThread, delegation: OpenThreadDelegationRef): OpenThreadDelegationRef[] {
     const existing = thread.delegationHistory.find((item) => item.delegationId === delegation.delegationId);
+    if (existing && isTerminalDelegationStatus(existing.status) && isPendingDelegationStatus(delegation.status)) {
+      return thread.delegationHistory;
+    }
     return existing
       ? thread.delegationHistory.map((item) => (
         item.delegationId === delegation.delegationId ? { ...item, ...delegation } : item
@@ -187,6 +191,15 @@ export class OpenThreadStore {
     return thread;
   }
 
+  private requireDelegationFrom(
+    history: OpenThreadDelegationRef[],
+    delegationId: string,
+  ): OpenThreadDelegationRef {
+    const delegation = history.find((item) => item.delegationId === delegationId);
+    if (!delegation) throw new Error(`Open Thread delegation not found: ${delegationId}`);
+    return delegation;
+  }
+
   private sortThreads(threads: OpenThread[]): OpenThread[] {
     return [...threads].sort((left, right) => right.updatedAt.localeCompare(left.updatedAt));
   }
@@ -201,4 +214,12 @@ function isNotFoundError(error: unknown): boolean {
 
 function maxIsoTimestamp(left: string, right: string): string {
   return left.localeCompare(right) >= 0 ? left : right;
+}
+
+function isTerminalDelegationStatus(status: OpenThreadDelegationRef["status"]): boolean {
+  return status === "completed" || status === "failed" || status === "cancelled";
+}
+
+function isPendingDelegationStatus(status: OpenThreadDelegationRef["status"]): boolean {
+  return status === "requested" || status === "running";
 }

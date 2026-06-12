@@ -98,6 +98,42 @@ describe("OpenThreadStore", () => {
     expect(thread.delegationHistory[0]).toMatchObject({ status: "cancelled" });
   });
 
+  it.each(["completed", "failed", "cancelled"] as const)(
+    "does not downgrade %s delegation history when stale requested ref arrives",
+    async (status) => {
+      const repo = await makeRepo();
+      const store = new OpenThreadStore(repo);
+      await store.createSeedThread({
+        id: "thread-1",
+        title: "Agent identity",
+        whyItMatters: "Along should stay focused on self-initiation and companionship.",
+        currentJudgment: "Along is a conductor companion, not a default executor.",
+      });
+
+      await store.recordDelegation("thread-1", {
+        delegationId: "delegation-1",
+        target: "codex",
+        status,
+        createdAt: "2026-06-12T00:05:00.000Z",
+        resultRef: "delegation:delegation-1:result",
+      });
+      await store.recordDelegation("thread-1", {
+        delegationId: "delegation-1",
+        target: "codex",
+        status: "requested",
+        createdAt: "2026-06-12T00:01:00.000Z",
+      });
+
+      const [thread] = await store.readAll();
+      expect(thread.status).toBe(status === "failed" ? "needs_user" : "watching");
+      expect(thread.delegationHistory).toHaveLength(1);
+      expect(thread.delegationHistory[0]).toMatchObject({
+        status,
+        resultRef: "delegation:delegation-1:result",
+      });
+    },
+  );
+
   it("does not clobber malformed open thread storage on mutation", async () => {
     const repo = await makeRepo();
     const store = new OpenThreadStore(repo);
