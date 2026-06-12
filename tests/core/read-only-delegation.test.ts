@@ -32,6 +32,14 @@ describe("read-only delegation", () => {
     expect(prompt).toContain("Inspect whether runtime implementation matches the approved plan");
   });
 
+  it("always includes default forbidden actions even when request actions are empty", () => {
+    const prompt = buildReadOnlyDelegationPrompt({ ...request(), forbiddenActions: [] });
+
+    for (const forbiddenAction of defaultForbiddenReadOnlyActions) {
+      expect(prompt).toContain(forbiddenAction);
+    }
+  });
+
   it("parses the final Codex JSONL agent message", () => {
     const jsonl = [
       JSON.stringify({ type: "thread.started", thread_id: "abc" }),
@@ -66,5 +74,73 @@ describe("read-only delegation", () => {
     expect(result.status).toBe("completed");
     expect(result.summary).toBe("Reviewed");
     expect(result.confidence).toBe("medium");
+  });
+
+  it("rejects malformed structured output instead of completing with fallbacks", async () => {
+    const adapter = new CodexReadOnlyAdapter({
+      runCodex: async (_prompt) =>
+        [
+          JSON.stringify({
+            type: "item.completed",
+            item: { type: "agent_message", text: "{\"summary\":\"Reviewed\"}" },
+          }),
+        ].join("\n"),
+    });
+
+    await expect(adapter.runReadOnly(request())).rejects.toThrow("malformed");
+  });
+
+  it("rejects invalid confidence values", async () => {
+    const adapter = new CodexReadOnlyAdapter({
+      runCodex: async (_prompt) =>
+        [
+          JSON.stringify({
+            type: "item.completed",
+            item: {
+              type: "agent_message",
+              text: "{\"summary\":\"Reviewed\",\"evidence\":[],\"risks\":[],\"recommendations\":[],\"confidence\":\"certain\"}",
+            },
+          }),
+        ].join("\n"),
+    });
+
+    await expect(adapter.runReadOnly(request())).rejects.toThrow("confidence");
+  });
+
+  it("rejects output with no final agent message", async () => {
+    const adapter = new CodexReadOnlyAdapter({
+      runCodex: async (_prompt) =>
+        [JSON.stringify({ type: "thread.started", thread_id: "abc" }), JSON.stringify({ type: "turn.completed" })].join(
+          "\n",
+        ),
+    });
+
+    await expect(adapter.runReadOnly(request())).rejects.toThrow("no final agent message");
+  });
+
+  it("rejects unsupported targets before invoking the runner", async () => {
+    let called = false;
+    const adapter = new CodexReadOnlyAdapter({
+      runCodex: async (_prompt) => {
+        called = true;
+        return "";
+      },
+    });
+
+    await expect(adapter.runReadOnly({ ...request(), target: "manual" })).rejects.toThrow("Unsupported");
+    expect(called).toBe(false);
+  });
+
+  it("rejects non-requested statuses before invoking the runner", async () => {
+    let called = false;
+    const adapter = new CodexReadOnlyAdapter({
+      runCodex: async (_prompt) => {
+        called = true;
+        return "";
+      },
+    });
+
+    await expect(adapter.runReadOnly({ ...request(), status: "completed" })).rejects.toThrow("requested");
+    expect(called).toBe(false);
   });
 });

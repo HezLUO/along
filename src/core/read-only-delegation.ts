@@ -40,6 +40,7 @@ export class CodexReadOnlyAdapter implements AgentAdapter {
   }
 
   async runReadOnly(input: ReadOnlyDelegationRequest): Promise<ReadOnlyDelegationResult> {
+    assertCanRunCodexReadOnly(input);
     const prompt = await this.buildPrompt(input);
     const rawOutput = await (this.options.runCodex ?? runCodexCli)(prompt, input.budget.timeoutMs);
     const finalMessage = parseCodexJsonlFinalMessage(rawOutput);
@@ -61,6 +62,7 @@ export class CodexReadOnlyAdapter implements AgentAdapter {
 }
 
 export function buildReadOnlyDelegationPrompt(input: ReadOnlyDelegationRequest): string {
+  const forbiddenActions = mergeForbiddenActions(input.forbiddenActions);
   return [
     "You are being called by Along as a READ-ONLY analysis delegate.",
     "",
@@ -71,7 +73,7 @@ export function buildReadOnlyDelegationPrompt(input: ReadOnlyDelegationRequest):
     ...input.scope.map((item) => `- ${item}`),
     "",
     "Forbidden actions:",
-    ...input.forbiddenActions.map((item) => `- ${item}`),
+    ...forbiddenActions.map((item) => `- ${item}`),
     "",
     "Question:",
     input.question,
@@ -97,11 +99,24 @@ export function parseCodexJsonlFinalMessage(jsonl: string): string {
 }
 
 async function runCodexCli(prompt: string, timeoutMs: number): Promise<string> {
-  const { stdout } = await execFileAsync("codex", ["exec", "--json", "--sandbox", "read-only", prompt], {
+  const { stdout } = await execFileAsync("codex", ["exec", "--json", "--sandbox", "read-only", "--ephemeral", prompt], {
     timeout: timeoutMs,
     maxBuffer: 1024 * 1024 * 4,
   });
   return stdout;
+}
+
+function assertCanRunCodexReadOnly(input: ReadOnlyDelegationRequest): void {
+  if (input.target !== "codex") {
+    throw new Error(`Unsupported read-only delegation target for Codex adapter: ${input.target}.`);
+  }
+  if (input.status !== "requested") {
+    throw new Error(`Codex read-only delegation requires requested status; received ${input.status}.`);
+  }
+}
+
+function mergeForbiddenActions(requestActions: string[]): string[] {
+  return [...new Set([...defaultForbiddenReadOnlyActions, ...requestActions])];
 }
 
 function parseDelegationJson(
@@ -114,19 +129,32 @@ function parseDelegationJson(
     recommendations?: unknown;
     confidence?: unknown;
   };
-  const confidence =
-    parsed.confidence === "low" || parsed.confidence === "medium" || parsed.confidence === "high"
-      ? parsed.confidence
-      : "low";
+  if (typeof parsed.summary !== "string" || parsed.summary.trim().length === 0) {
+    throw new Error("Codex read-only delegation returned malformed structured output: summary must be a non-empty string.");
+  }
+  if (!isStringArray(parsed.evidence)) {
+    throw new Error("Codex read-only delegation returned malformed structured output: evidence must be string[].");
+  }
+  if (!isStringArray(parsed.risks)) {
+    throw new Error("Codex read-only delegation returned malformed structured output: risks must be string[].");
+  }
+  if (!isStringArray(parsed.recommendations)) {
+    throw new Error("Codex read-only delegation returned malformed structured output: recommendations must be string[].");
+  }
+  if (parsed.confidence !== "low" && parsed.confidence !== "medium" && parsed.confidence !== "high") {
+    throw new Error(
+      "Codex read-only delegation returned malformed structured output: confidence must be low, medium, or high.",
+    );
+  }
   return {
-    summary: typeof parsed.summary === "string" ? parsed.summary : "Codex returned an unstructured summary.",
-    evidence: toStringArray(parsed.evidence),
-    risks: toStringArray(parsed.risks),
-    recommendations: toStringArray(parsed.recommendations),
-    confidence,
+    summary: parsed.summary,
+    evidence: parsed.evidence,
+    risks: parsed.risks,
+    recommendations: parsed.recommendations,
+    confidence: parsed.confidence,
   };
 }
 
-function toStringArray(value: unknown): string[] {
-  return Array.isArray(value) ? value.filter((item): item is string => typeof item === "string") : [];
+function isStringArray(value: unknown): value is string[] {
+  return Array.isArray(value) && value.every((item) => typeof item === "string");
 }
