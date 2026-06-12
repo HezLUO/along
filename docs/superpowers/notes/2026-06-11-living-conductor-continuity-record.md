@@ -15,7 +15,9 @@ Use this file in future sessions before continuing product design, implementatio
 
 ## Current Goal
 
-Living Conductor Foundation is merged locally into `main` and verified. The current goal is post-merge stewardship: keep the implementation worktree intact until cleanup is explicitly requested, preserve the execution record, and decide later whether to push, create a PR, or continue locally.
+Living Conductor Foundation is merged locally into `main`, verified, and product-calibrated against Along itself. The current goal is to decide whether to run a focused Product Expression Tightening Pass before any new capability expansion.
+
+Default next step: tighten how Along expresses self-initiation, companionship, delegation intent, user control, and quietness. Do not start Memory v2, Hermes adapter, Conductor Packs, or write delegation until that product-feel decision is explicit.
 
 ## Core Product Definition
 
@@ -240,11 +242,58 @@ Implementation worktree remains preserved:
 
 `/Users/james/Codex Project/General Codex Project/Along-worktrees/runtime-control-plane-implementation`
 
+## Product Calibration Record
+
+First Along-self calibration completed on 2026-06-12.
+
+Report:
+
+`docs/superpowers/notes/2026-06-12-living-conductor-product-calibration.md`
+
+Calibration scenario:
+
+- used Along itself as the project under observation;
+- created five real strategic Open Threads under ignored `.along/` runtime state;
+- ran a recovered runtime session, user-event heartbeat, interval heartbeat, delegation-result ingestion, Doctor inspection, UI inspection, and wrap-up;
+- allowed `.along/` runtime data but made no source code changes during observation.
+
+Key evidence:
+
+- `POST /api/conductor/heartbeat` with `trigger=user_event` selected `read_only_delegation` for five Open Threads.
+- Delegation requests preserved read-only scope and forbade file modification, commits, pushes, dependency installs, destructive commands, and project state changes.
+- A delegation result for `along-self-initiation` merged as `adds_new_risk` and moved the live Open Thread to `needs_user`.
+- A second `trigger=interval` heartbeat did not duplicate pending delegation requests, but still returned `thread_update` for all five threads.
+- `POST /api/session/wrap-up` wrote `.along/journal/2026-06-12.md` and queued a review-gated memory candidate.
+- Doctor preserved the runtime boundary: `companion`, `project_reviewed`, `ambient`, `canModifyProjectFiles=false`, `canCallTools=false`, `canPromoteMemory=false`.
+
+Calibration conclusion:
+
+Living Conductor Foundation is mechanically sound and should be kept. It proves Open Threads, heartbeat attention, read-only conductor delegation, Judgment Merge, traces, Doctor, journal, and review-gated memory can work together.
+
+Product feel is not yet strong enough. The UI currently reads more like a useful conductor dashboard than a living companion. Self-initiation is present in mechanics, but still weak as a felt experience. Companionship is strongest in wrap-up and journal, weaker in Project Intelligence and Delegation Live View.
+
+Recommended next step:
+
+Run a Product Expression Tightening Pass before Memory v2, Hermes adapter, Conductor Packs, or write delegation.
+
+Focus areas:
+
+- make ambient attention visible without requiring the user to press `Check threads`;
+- rank or batch Open Threads instead of delegating all equally eligible threads;
+- add clearer stop, edit, rerun, and takeover controls;
+- rewrite dense delegation reasons into companion-readable language;
+- explain attention decisions through user-relevant stakes, not only scoring factors;
+- decide whether `Project intelligence` is a primary product surface or an advanced/debug surface.
+
 ## Pending Decisions
 
 - how to migrate or reinterpret Curiosity Queue beyond this foundation;
 - Hermes adapter execution method;
 - thresholds for digest and intervention beyond deterministic V1 defaults;
+- how to express self-initiation as ambient presence rather than a manual dashboard action;
+- how to batch, prioritize, or suppress multiple equally eligible Open Threads;
+- how stop, edit, rerun, and takeover controls should appear in Delegation Live View;
+- whether persisted conductor snapshots should update after delegation-result ingestion or remain heartbeat snapshots only;
 - how user feedback updates Intervention Style Profile beyond the current preference model;
 - whether Open Threads becomes a visible primary UI surface or remains a debug/product-intelligence surface;
 - whether Delegation Live View becomes a standalone surface or remains part of the current UI/debug model;
@@ -267,3 +316,4 @@ Implementation worktree remains preserved:
 - 2026-06-12: Final whole-branch re-review passed at `feda20a`; no blockers remain.
 - 2026-06-12: Main session independently reviewed implementation worktree, reran focused tests, typecheck, build, and full test suite.
 - 2026-06-12: Merged `runtime-control-plane-implementation` into `main` locally at `445b1b3`, then reran typecheck, build, and full test suite on merged `main`; all passed.
+- 2026-06-12: First Along-self product calibration completed; recommendation is Product Expression Tightening before capability expansion.
