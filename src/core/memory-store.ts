@@ -35,6 +35,9 @@ export class MemoryStore {
       fs.mkdir(path.join(this.projectDir, "traces"), { recursive: true }),
       fs.mkdir(path.join(this.projectDir, "locks"), { recursive: true }),
       fs.mkdir(path.join(this.projectDir, "graph"), { recursive: true }),
+      fs.mkdir(path.join(this.projectDir, "threads"), { recursive: true }),
+      fs.mkdir(path.join(this.projectDir, "delegations"), { recursive: true }),
+      fs.mkdir(path.join(this.projectDir, "conductor"), { recursive: true }),
       fs.mkdir(path.join(this.globalDir, "graph"), { recursive: true }),
     ]);
 
@@ -43,6 +46,8 @@ export class MemoryStore {
     await this.writeIfMissing(path.join(this.projectDir, "memory", "user-patterns.md"), "# Project-Specific User Patterns\n\nNo project-specific patterns recorded yet.\n");
     await this.writeIfMissing(path.join(this.projectDir, "memory", "learned-facts.json"), "[]\n");
     await this.writeIfMissing(path.join(this.projectDir, "curiosity", "queue.json"), "[]\n");
+    await this.writeIfMissing(path.join(this.projectDir, "threads", "open-threads.json"), "[]\n");
+    await this.writeIfMissing(path.join(this.projectDir, "delegations", "requests.json"), "[]\n");
     await this.writeIfMissing(path.join(this.projectDir, "curiosity", "resolved.md"), "# Resolved Curiosities\n\n");
     await this.writeIfMissing(path.join(this.projectDir, "settings.json"), `${JSON.stringify(defaultRuntimeProfile, null, 2)}\n`);
     await this.writeIfMissing(path.join(this.projectDir, "state.json"), `${JSON.stringify({

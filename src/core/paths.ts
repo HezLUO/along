@@ -56,3 +56,23 @@ export function getTraceFilePath(repoPath: string, sessionId: string): string {
 export function getRuntimeLockPath(repoPath: string): string {
   return path.join(getProjectAlongDir(repoPath), "locks", "runtime.lock");
 }
+
+export function getOpenThreadsDir(repoPath: string): string {
+  return path.join(getProjectAlongDir(repoPath), "threads");
+}
+
+export function getOpenThreadsPath(repoPath: string): string {
+  return path.join(getOpenThreadsDir(repoPath), "open-threads.json");
+}
+
+export function getDelegationsDir(repoPath: string): string {
+  return path.join(getProjectAlongDir(repoPath), "delegations");
+}
+
+export function getDelegationRequestsPath(repoPath: string): string {
+  return path.join(getDelegationsDir(repoPath), "requests.json");
+}
+
+export function getConductorSnapshotPath(repoPath: string): string {
+  return path.join(getProjectAlongDir(repoPath), "conductor", "snapshot.json");
+}
