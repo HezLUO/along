@@ -11,6 +11,17 @@ export interface AppOptions {
   homeDir?: string;
 }
 
+function isSafeSessionId(value: string): boolean {
+  return value.length > 0
+    && value !== "."
+    && value !== ".."
+    && value !== "current"
+    && value !== "index"
+    && !value.includes("/")
+    && !value.includes("\\")
+    && /^[A-Za-z0-9_-]+$/.test(value);
+}
+
 export function createApp(options: AppOptions) {
   const app = express();
   const runtime = new AlongRuntime(options);
@@ -63,7 +74,7 @@ export function createApp(options: AppOptions) {
 
   app.get("/api/runtime/traces", async (req, res, next) => {
     try {
-      const sessionId = z.string().min(1).parse(req.query.sessionId);
+      const sessionId = z.string().refine(isSafeSessionId, "Invalid session id").parse(req.query.sessionId);
       res.json(await traceStore.readTraces(sessionId));
     } catch (error) {
       next(error);
@@ -137,6 +148,14 @@ export function createApp(options: AppOptions) {
 
   app.use((error: unknown, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
     const message = error instanceof Error ? error.message : "Unknown error";
+    if (error instanceof z.ZodError) {
+      res.status(400).json({ error: message });
+      return;
+    }
+    if (message.startsWith("Review item not found:")) {
+      res.status(404).json({ error: message });
+      return;
+    }
     res.status(500).json({ error: message });
   });
 

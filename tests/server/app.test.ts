@@ -68,6 +68,17 @@ describe("server app", () => {
     const decisionBody = await decision.json() as { status: string };
     const reject = await fetch(`http://127.0.0.1:${address.port}/api/review/${inboxBody[0].id}/reject`, { method: "POST" });
     const rejectBody = await reject.json() as { status: string };
+    const invalidTrace = await fetch(`http://127.0.0.1:${address.port}/api/runtime/traces?sessionId=${encodeURIComponent("../current")}`);
+    const invalidDecision = await fetch(`http://127.0.0.1:${address.port}/api/review/items/${itemsBody[0].id}/decision`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ decision: "maybe" }),
+    });
+    const missingReview = await fetch(`http://127.0.0.1:${address.port}/api/review/items/review-missing/decision`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ decision: "accepted" }),
+    });
     server.close();
 
     expect(doctorBody.lifecycleState).toBe("wrapped");
@@ -78,5 +89,8 @@ describe("server app", () => {
     expect(itemsBody[0].id).toBe(inboxBody[0].id);
     expect(decisionBody.status).toBe("rejected");
     expect(rejectBody.status).toBe("rejected");
+    expect(invalidTrace.status).toBe(400);
+    expect(invalidDecision.status).toBe(400);
+    expect(missingReview.status).toBe(404);
   });
 });
