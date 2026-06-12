@@ -1,9 +1,18 @@
 import fs from "node:fs/promises";
+import type { Server } from "node:http";
 import os from "node:os";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
 import { createApp } from "../../src/server/app";
 import { OpenThreadStore } from "../../src/core/open-thread-store";
+
+async function closeServer(server: Server | undefined): Promise<void> {
+  if (!server?.listening) return;
+
+  await new Promise<void>((resolve, reject) => {
+    server.close((error) => error ? reject(error) : resolve());
+  });
+}
 
 async function makeServer() {
   const root = await fs.mkdtemp(path.join(os.tmpdir(), "along-api-conductor-"));
@@ -21,29 +30,36 @@ async function makeServer() {
 
 describe("conductor API", () => {
   it("returns conductor snapshot and heartbeat decisions", async () => {
-    const { repo, server, base } = await makeServer();
-    const threads = new OpenThreadStore(repo);
-    await threads.createSeedThread({
-      id: "thread-1",
-      title: "Runtime plan drift",
-      whyItMatters: "Runtime completion matters before Memory v2.",
-      currentJudgment: "Runtime may be incomplete.",
-    });
+    let server: Server | undefined;
 
-    await fetch(`${base}/api/session/start`, { method: "POST" });
-    const heartbeat = await fetch(`${base}/api/conductor/heartbeat`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ trigger: "resume" }),
-    });
-    const heartbeatBody = await heartbeat.json() as { attention: Array<{ action: string }>; delegations: unknown[] };
-    const snapshot = await fetch(`${base}/api/conductor/snapshot`);
-    const snapshotBody = await snapshot.json() as { threads: Array<{ id: string }> };
-    server.close();
+    try {
+      const running = await makeServer();
+      server = running.server;
+      const { repo, base } = running;
+      const threads = new OpenThreadStore(repo);
+      await threads.createSeedThread({
+        id: "thread-1",
+        title: "Runtime plan drift",
+        whyItMatters: "Runtime completion matters before Memory v2.",
+        currentJudgment: "Runtime may be incomplete.",
+      });
 
-    expect(heartbeat.status).toBe(200);
-    expect(heartbeatBody.attention[0].action).toBe("read_only_delegation");
-    expect(heartbeatBody.delegations).toHaveLength(1);
-    expect(snapshotBody.threads[0].id).toBe("thread-1");
+      await fetch(`${base}/api/session/start`, { method: "POST" });
+      const heartbeat = await fetch(`${base}/api/conductor/heartbeat`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ trigger: "resume" }),
+      });
+      const heartbeatBody = await heartbeat.json() as { attention: Array<{ action: string }>; delegations: unknown[] };
+      const snapshot = await fetch(`${base}/api/conductor/snapshot`);
+      const snapshotBody = await snapshot.json() as { threads: Array<{ id: string }> };
+
+      expect(heartbeat.status).toBe(200);
+      expect(heartbeatBody.attention[0].action).toBe("read_only_delegation");
+      expect(heartbeatBody.delegations).toHaveLength(1);
+      expect(snapshotBody.threads[0].id).toBe("thread-1");
+    } finally {
+      await closeServer(server);
+    }
   });
 });
