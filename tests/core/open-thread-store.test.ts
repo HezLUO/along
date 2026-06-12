@@ -98,6 +98,29 @@ describe("OpenThreadStore", () => {
     expect(thread.delegationHistory[0]).toMatchObject({ status: "cancelled" });
   });
 
+  it("preserves needs_user when recording a cancelled delegation reference", async () => {
+    const repo = await makeRepo();
+    const store = new OpenThreadStore(repo);
+    await store.upsert(makeThread({
+      id: "thread-1",
+      status: "needs_user",
+      currentJudgment: "Runtime implementation needs user attention.",
+      updatedAt: "2026-06-12T00:05:00.000Z",
+    }));
+
+    await store.recordDelegation("thread-1", {
+      delegationId: "delegation-1",
+      target: "codex",
+      status: "cancelled",
+      createdAt: "2026-06-12T00:06:00.000Z",
+      resultRef: "delegation:delegation-1:result",
+    }, "2026-06-12T00:06:00.000Z");
+
+    const [thread] = await store.readAll();
+    expect(thread.status).toBe("needs_user");
+    expect(thread.delegationHistory[0]).toMatchObject({ status: "cancelled" });
+  });
+
   it.each(["completed", "failed", "cancelled"] as const)(
     "does not downgrade %s delegation history when stale requested ref arrives",
     async (status) => {

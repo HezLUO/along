@@ -92,7 +92,7 @@ export class OpenThreadStore {
       const effectiveDelegation = this.requireDelegationFrom(history, delegation.delegationId);
       nextThread = {
         ...thread,
-        status: this.statusForDelegation(effectiveDelegation),
+        status: this.statusForDelegation(thread.status, effectiveDelegation),
         delegationHistory: history,
         updatedAt: maxIsoTimestamp(thread.updatedAt, updatedAt),
       };
@@ -179,8 +179,12 @@ export class OpenThreadStore {
     ];
   }
 
-  private statusForDelegation(delegation: OpenThreadDelegationRef): OpenThread["status"] {
+  private statusForDelegation(
+    currentStatus: OpenThread["status"],
+    delegation: OpenThreadDelegationRef,
+  ): OpenThread["status"] {
     if (delegation.status === "failed") return "needs_user";
+    if (delegation.status === "cancelled" && currentStatus === "needs_user") return "needs_user";
     if (delegation.status === "completed" || delegation.status === "cancelled") return "watching";
     return "delegated";
   }
