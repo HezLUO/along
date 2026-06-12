@@ -2,19 +2,20 @@
 
 Date: 2026-06-11
 Status: Active cross-session record
+Last updated: 2026-06-12
 Project folder: `/Users/james/Codex Project/General Codex Project/Along`
 
 ## Purpose
 
 This record preserves the product pivot from "general coding-agent competitor" toward a smaller, sharper Along identity:
 
-> self-initiated living conductor, not default executor.
+> self-initiated living conductor and companion, not default executor.
 
 Use this file in future sessions before continuing product design, implementation planning, or subagent-driven execution.
 
 ## Current Goal
 
-Design Along V1 as a living conductor agent that can maintain Open Threads, run controlled heartbeats, delegate read-only analysis, merge results into its own judgment, and intervene when useful.
+Prepare implementation planning for Along V1 as a living conductor agent that can maintain Open Threads, run controlled heartbeats, delegate read-only analysis, merge results into its own judgment, and intervene when useful.
 
 ## Core Product Definition
 
@@ -22,6 +23,7 @@ Along's differentiation is:
 
 1. **Self-initiated attention**: Along proactively notices unresolved threads, stale decisions, changed evidence, implementation drift, and moments where user feedback or challenge would matter.
 2. **Conductor identity**: Along coordinates Codex, Hermes, or subagents for analysis and review, then forms its own judgment. It is not primarily an execution agent in V1.
+3. **Companionship**: Along's autonomy should feel like staying with the user across unfinished questions, not like surveillance, task enforcement, or generic productivity automation.
 
 ## Approved V1 Boundaries
 
@@ -36,6 +38,25 @@ Along's differentiation is:
 - Intervention style is user-configurable.
 - Stronger intervention style does not expand permissions.
 - V1 includes a noise-control principle, but future versions may loosen it when the user chooses a stronger presence mode.
+- Along's core remains self-initiation and companionship. Product surfaces inspired by other assistants must serve that core rather than broaden Along into a general consumer assistant.
+
+## Marvis Reference Conclusion
+
+Marvis is useful as a product-expression reference, not as a positioning target.
+
+Useful ideas to absorb:
+
+- user-readable privacy/delegation modes over the precise Permission Profile;
+- Delegation Live View or debug equivalent so the user can watch, stop, edit, rerun, or take over delegated analysis;
+- Project Intelligence Library as a visible surface for Open Threads, evidence, judgments, risks, corrections, and delegation results;
+- Conductor Packs that express Along's self-initiation in understandable presets such as Implementation Watcher, Design Critic, Research Scout, Memory Curator, and Challenge Mode.
+
+Ideas not to absorb into V1:
+
+- broad consumer assistant positioning;
+- PC-butler scenarios;
+- always-on daemon just to claim constant presence;
+- replacing self-initiation and companionship with generic automation.
 
 ## Relationship To Existing Designs
 
@@ -60,9 +81,9 @@ Formal spec:
 
 ## Recommended Next Step
 
-User should review the written spec.
+The living conductor spec is approved, including the 2026-06-12 Marvis-inspired product-expression addendum.
 
-After approval, write an implementation plan. The plan should decide whether to revise the existing Memory v2 and Autonomy plans or supersede them with a living-conductor plan.
+Next step: write an implementation plan. The plan should decide whether to revise the existing Memory v2 and Autonomy plans or supersede them with a living-conductor plan.
 
 Likely implementation order:
 
@@ -83,6 +104,8 @@ Likely implementation order:
 - thresholds for digest and intervention;
 - how user feedback updates Intervention Style Profile;
 - whether V1 should expose Open Threads as a visible primary UI surface or a debug-first surface.
+- whether Delegation Live View is a standalone surface or part of Doctor/debug.
+- which Conductor Pack ships first, if any.
 
 ## Change Log
 
@@ -90,3 +113,5 @@ Likely implementation order:
 - 2026-06-11: User approved V1 read-only delegation as the default boundary.
 - 2026-06-11: User approved Open Threads as the core object connecting Memory v2 and Autonomy.
 - 2026-06-11: User approved runtime-triggered heartbeat, deterministic attention scoring, LLM-assisted judgment, Judgment Merge, Permission Profile, Intervention Style Profile, and V1 MVP scope.
+- 2026-06-12: User approved the written living conductor spec.
+- 2026-06-12: Marvis reviewed as product-expression reference. Added privacy/delegation modes, Delegation Live View, Project Intelligence Library, and Conductor Packs as supporting surfaces while preserving self-initiation and companionship as the core.

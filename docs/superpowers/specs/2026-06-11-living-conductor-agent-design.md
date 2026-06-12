@@ -2,6 +2,7 @@
 
 Date: 2026-06-11
 Status: User-approved design, pending implementation planning
+Last updated: 2026-06-12
 Project folder: `/Users/james/Codex Project/General Codex Project/Along`
 
 ## Summary
@@ -11,6 +12,8 @@ Along V1 should not compete directly with Codex, Claude Code, Hermes Agent, or o
 Along V1 is a **living conductor agent**:
 
 > Along's differentiation is self-initiated attention and conductor identity. It proactively notices, judges, delegates, integrates, and intervenes, but it does not default to direct execution.
+
+Self-initiation and companionship are the product core. Conductor behavior, delegation, memory, visible traces, and product surfaces only matter when they help Along feel like it is staying with the user and carrying unresolved threads forward.
 
 The first version should prove that Along can:
 
@@ -38,6 +41,21 @@ Its primary role is to keep continuity over unresolved questions and coordinate 
 - deciding whether to stay silent, update internal state, send a digest, or interrupt the user.
 
 Write-capable execution is outside the V1 default. Any delegation that modifies project files, creates commits, installs dependencies, pushes branches, or changes durable project state must require explicit user approval.
+
+## Companionship Constraint
+
+Along V1 should remain a companion, not a monitoring dashboard, task manager, or productivity enforcer.
+
+Companionship means:
+
+- Along keeps continuity with the user across unfinished questions;
+- Along explains why it is paying attention instead of silently profiling the user;
+- Along can challenge the user, but should preserve user agency;
+- Along's default rhythm is low-pressure and non-manipulative;
+- Along can be more direct or present only when the user chooses that relationship style;
+- Along's memory should feel like shared history, not hidden surveillance.
+
+The conductor layer must serve this relationship. If a feature makes Along more capable but less companion-like, it should be deferred or redesigned.
 
 ## Core Object Model: Open Thread
 
@@ -231,6 +249,72 @@ Intervention Style Profile controls how Along speaks when it decides to interven
 
 High-risk situations may temporarily increase directness if the profile allows escalation, but Along must cite the reason and evidence rather than rely on personality performance.
 
+## Marvis-Inspired Product Expression
+
+Marvis is useful as a product-expression reference, not as a new positioning target. Along should not become a broad consumer AI assistant or PC butler. The useful lesson is that agent capability should be visible, understandable, and interruptible by the user.
+
+Along should absorb four product-surface ideas while preserving self-initiation and companionship.
+
+### Privacy And Delegation Modes
+
+The underlying Permission Profile should remain precise, but the user-facing mode labels should be easier to understand.
+
+Possible V1 product labels:
+
+- `Local Only`: Along reads local approved memory and project context, but does not call external agents.
+- `Ask Before Delegation`: Along may propose read-only Codex or Hermes delegation, but waits for approval.
+- `Read-Only Auto`: Along may automatically run read-only delegation for active Open Threads.
+- `Write Requires Approval`: Along may prepare write-capable delegation, but cannot launch it without explicit approval.
+
+These labels are product affordances over the Permission Profile. They must not create new permissions.
+
+### Delegation Live View And Takeover
+
+When Along initiates read-only delegation, the user should be able to see and interrupt the process.
+
+A V1 live view or debug view should show:
+
+- which Open Thread triggered delegation;
+- why Along thinks delegation is useful;
+- which agent is being called;
+- what scope the agent may read;
+- which actions are forbidden;
+- current status;
+- returned result;
+- Along's Judgment Merge summary;
+- controls to stop, dismiss, rerun, edit the delegation prompt, or request write escalation.
+
+This supports companionship because Along is not disappearing into hidden automation. The user can watch, understand, and take over.
+
+### Project Intelligence Library
+
+Open Threads, evidence, decisions, risks, corrections, and delegation results should be visible as a project intelligence surface.
+
+This is not a generic file search product. It should answer:
+
+- what questions are still alive;
+- what Along currently believes;
+- what evidence supports or weakens that belief;
+- what external agents found;
+- what changed since the last review;
+- what the user corrected.
+
+The library should make Along's memory feel like shared continuity rather than opaque storage.
+
+### Conductor Packs
+
+Along can expose self-initiation through user-understandable presets rather than raw internal mechanisms.
+
+Potential V1 or early post-V1 packs:
+
+- `Implementation Watcher`: watches implementation progress against approved plans.
+- `Design Critic`: watches product direction, contradictions, and scope drift.
+- `Research Scout`: gathers read-only evidence for active Open Threads.
+- `Memory Curator`: keeps decisions, corrections, and long-term preferences coherent.
+- `Challenge Mode`: intervenes more directly when the user drifts from stated goals.
+
+These packs should be presets over Open Threads, attention scoring, Permission Profile, and Intervention Style Profile. They should not become separate unrelated modules.
+
 ## V1 MVP Scope
 
 V1 should prove the living conductor loop in one real scenario before expanding.
@@ -251,6 +335,9 @@ V1 should include:
 - Permission Profile;
 - Intervention Style Profile;
 - trace and Doctor visibility;
+- user-facing privacy/delegation mode labels;
+- a first Delegation Live View or debug equivalent;
+- a first Project Intelligence Library surface for Open Threads;
 - a simple UI or debug view for active threads, recent judgment changes, delegation history, and pending user confirmations.
 
 V1 should not include:
@@ -266,6 +353,7 @@ V1 should not include:
 - automatic commits or pushes;
 - complex personality or emotion simulation;
 - full visual memory browser.
+- broad Marvis-style consumer assistant or PC-butler scenarios.
 
 ## Data Flow
 
@@ -356,6 +444,10 @@ The implementation plan should resolve these decisions before code changes:
 - whether Open Thread state lives under `.along/threads/`, existing graph memory, or both;
 - Codex adapter invocation method and output capture format;
 - first UI/debug surface for Open Threads and delegation history;
+- first privacy/delegation mode labels;
+- minimum viable Delegation Live View controls;
+- whether Project Intelligence Library is a primary UI surface or debug-first;
+- which Conductor Pack, if any, ships first;
 - attention score thresholds and defaults;
 - how to represent user feedback on interventions;
 - how to migrate or reinterpret existing curiosity queue data;
