@@ -11,6 +11,7 @@ import {
   type ConductorPreferences,
   type ConductorSnapshot,
   type HeartbeatTrigger,
+  type JudgmentMergeResult,
   type OpenThread,
   type ReadOnlyDelegationRequest,
   type ReadOnlyDelegationResult,
@@ -93,52 +94,53 @@ export class ConductorRuntime {
   async createReadOnlyDelegation(input: CreateDelegationInput): Promise<ReadOnlyDelegationRequest> {
     this.requireThread(await this.threads.readAll(), input.threadId);
 
-    const createdAt = new Date().toISOString();
-    const request: ReadOnlyDelegationRequest = {
-      id: randomUUID(),
-      threadId: input.threadId,
-      reason: input.reason,
-      target: "codex",
-      scope: input.scope,
-      forbiddenActions: [...defaultForbiddenReadOnlyActions],
-      question: input.question,
-      expectedOutput: ["summary", "evidence", "risks", "recommendations", "confidence"],
-      budget: {
-        timeoutMs: 120_000,
-        maxOutputChars: 12_000,
-      },
-      returnFormat: "judgment_merge_json",
-      status: "requested",
-      createdAt,
-    };
+    let selected: ReadOnlyDelegationRequest | undefined;
 
     await this.writes.updateJsonStrict<ReadOnlyDelegationRequest[]>(
       getDelegationRequestsPath(this.options.repoPath),
       [],
-      (requests) => [...requests, request],
+      (requests) => {
+        const existing = requests.find((request) => (
+          request.threadId === input.threadId
+          && request.target === "codex"
+          && this.isPendingDelegationStatus(request.status)
+        ));
+        if (existing) {
+          selected = existing;
+          return requests;
+        }
+
+        const request = this.buildReadOnlyDelegationRequest(input);
+        selected = request;
+        return [...requests, request];
+      },
     );
+    if (!selected) throw new Error(`Read-only delegation was not created: ${input.threadId}`);
     await this.threads.recordDelegation(input.threadId, {
-      delegationId: request.id,
-      target: request.target,
-      status: request.status,
-      createdAt,
+      delegationId: selected.id,
+      target: selected.target,
+      status: selected.status,
+      createdAt: selected.createdAt,
     });
-    return request;
+    return selected;
   }
 
-  async ingestDelegationResult(result: ReadOnlyDelegationResult) {
+  async ingestDelegationResult(result: ReadOnlyDelegationResult): Promise<JudgmentMergeResult> {
     const thread = this.requireThread(await this.threads.readAll(), result.threadId);
-    const merge = mergeDelegationResultIntoJudgment(thread, result);
-    const request = (await this.readDelegationRequests()).find((item) => item.id === result.requestId);
+    const request = await this.transitionDelegationRequest(result);
 
-    await this.updateDelegationRequest(result);
     await this.threads.recordDelegation(result.threadId, {
       delegationId: result.requestId,
       target: result.target,
       status: result.status,
-      createdAt: request?.createdAt ?? result.completedAt,
+      createdAt: request.createdAt,
       resultRef: `delegation:${result.requestId}:result`,
     });
+    if (result.status !== "completed") {
+      return this.buildNoopTerminalMerge(thread, result);
+    }
+
+    const merge = mergeDelegationResultIntoJudgment(thread, result);
     for (const evidence of merge.evidenceAdded) {
       await this.threads.appendEvidence(result.threadId, evidence);
     }
@@ -171,16 +173,79 @@ export class ConductorRuntime {
     return JSON.parse(raw) as ReadOnlyDelegationRequest[];
   }
 
-  private async updateDelegationRequest(result: ReadOnlyDelegationResult): Promise<void> {
+  private buildReadOnlyDelegationRequest(input: CreateDelegationInput): ReadOnlyDelegationRequest {
+    return {
+      id: randomUUID(),
+      threadId: input.threadId,
+      reason: input.reason,
+      target: "codex",
+      scope: input.scope,
+      forbiddenActions: [...defaultForbiddenReadOnlyActions],
+      question: input.question,
+      expectedOutput: ["summary", "evidence", "risks", "recommendations", "confidence"],
+      budget: {
+        timeoutMs: 120_000,
+        maxOutputChars: 12_000,
+      },
+      returnFormat: "judgment_merge_json",
+      status: "requested",
+      createdAt: new Date().toISOString(),
+    };
+  }
+
+  private async transitionDelegationRequest(result: ReadOnlyDelegationResult): Promise<ReadOnlyDelegationRequest> {
+    let selected: ReadOnlyDelegationRequest | undefined;
     await this.writes.updateJsonStrict<ReadOnlyDelegationRequest[]>(
       getDelegationRequestsPath(this.options.repoPath),
       [],
-      (requests) => requests.map((request) => (
-        request.id === result.requestId
-          ? { ...request, status: result.status, completedAt: result.completedAt }
-          : request
-      )),
+      (requests) => {
+        const request = requests.find((item) => item.id === result.requestId);
+        this.assertValidDelegationTransition(request, result);
+        selected = request;
+        return requests.map((item) => (
+          item.id === result.requestId
+            ? { ...item, status: result.status, completedAt: result.completedAt }
+            : item
+        ));
+      },
     );
+    if (!selected) throw new Error(`Delegation request not found: ${result.requestId}`);
+    return selected;
+  }
+
+  private assertValidDelegationTransition(
+    request: ReadOnlyDelegationRequest | undefined,
+    result: ReadOnlyDelegationResult,
+  ): asserts request is ReadOnlyDelegationRequest {
+    if (!request) throw new Error(`Delegation request not found: ${result.requestId}`);
+    if (request.threadId !== result.threadId) {
+      throw new Error(`Delegation result thread mismatch: request ${request.threadId} !== result ${result.threadId}.`);
+    }
+    if (request.target !== result.target) {
+      throw new Error(`Delegation result target mismatch: request ${request.target} !== result ${result.target}.`);
+    }
+    if (!this.isPendingDelegationStatus(request.status)) {
+      throw new Error(`Delegation request already terminal: ${request.id}`);
+    }
+  }
+
+  private buildNoopTerminalMerge(thread: OpenThread, result: ReadOnlyDelegationResult): JudgmentMergeResult {
+    return {
+      threadId: thread.id,
+      classification: "irrelevant_or_low_signal",
+      previousJudgment: thread.currentJudgment,
+      nextJudgment: thread.currentJudgment,
+      riskChanges: [],
+      evidenceAdded: [],
+      newThreadSuggestions: [],
+      shouldNotifyUser: result.status === "failed",
+      reason: `Delegation ${result.status}: ${result.summary.trim() || "No completed result to merge."}`,
+      createdAt: result.completedAt,
+    };
+  }
+
+  private isPendingDelegationStatus(status: ReadOnlyDelegationRequest["status"]): boolean {
+    return status === "requested" || status === "running";
   }
 
   private requireThread(threads: OpenThread[], threadId: string): OpenThread {

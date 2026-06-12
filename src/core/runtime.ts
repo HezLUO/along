@@ -244,6 +244,9 @@ export class AlongRuntime {
     if (!currentSession) {
       throw new Error("Cannot run conductor heartbeat without a current session.");
     }
+    if (currentSession.state === "wrap_up") {
+      throw new Error("Cannot run conductor heartbeat after session wrap-up.");
+    }
     return await this.conductor.runHeartbeat({ trigger, sessionId: currentSession.id });
   }
 
