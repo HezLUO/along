@@ -1,4 +1,4 @@
-import { randomUUID } from "node:crypto";
+import { createHash, randomUUID } from "node:crypto";
 import fs from "node:fs/promises";
 import { scoreOpenThread } from "./attention-score";
 import { mergeDelegationResultIntoJudgment } from "./judgment-merge";
@@ -197,10 +197,13 @@ export class ConductorRuntime {
         const request = requests.find((item) => item.id === result.requestId);
         this.assertValidDelegationTransition(request, result);
         selected = request;
+        const resultDigest = this.digestDelegationResult(result);
         return requests.map((item) => (
           item.id === result.requestId && this.isPendingDelegationStatus(item.status)
-            ? { ...item, status: result.status, completedAt: result.completedAt }
-            : item
+            ? { ...item, status: result.status, completedAt: result.completedAt, resultDigest }
+            : item.id === result.requestId && item.resultDigest === undefined
+              ? { ...item, resultDigest }
+              : item
         ));
       },
     );
@@ -220,10 +223,32 @@ export class ConductorRuntime {
       throw new Error(`Delegation result target mismatch: request ${request.target} !== result ${result.target}.`);
     }
     if (this.isPendingDelegationStatus(request.status)) return;
-    if (request.status === result.status && request.completedAt === result.completedAt) return;
+    const resultDigest = this.digestDelegationResult(result);
+    if (
+      request.status === result.status
+      && request.completedAt === result.completedAt
+      && (request.resultDigest === undefined || request.resultDigest === resultDigest)
+    ) {
+      return;
+    }
+    if (request.status === result.status && request.completedAt === result.completedAt) {
+      throw new Error(`Delegation terminal result payload mismatch: ${request.id}`);
+    }
     if (!this.isPendingDelegationStatus(request.status)) {
       throw new Error(`Delegation request already terminal: ${request.id}`);
     }
+  }
+
+  private digestDelegationResult(result: ReadOnlyDelegationResult): string {
+    const payload = {
+      summary: result.summary,
+      evidence: result.evidence,
+      risks: result.risks,
+      recommendations: result.recommendations,
+      confidence: result.confidence,
+      rawOutput: result.rawOutput ?? null,
+    };
+    return createHash("sha256").update(JSON.stringify(payload)).digest("hex");
   }
 
   private mergeCompletedResultIntoCurrentThread(

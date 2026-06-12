@@ -238,7 +238,10 @@ export class SessionLifecycle {
         state: "arriving",
         plan: { ...session.plan, state: "arriving" },
       };
-      await this.writePointerAndIndex(nextSession, "recovered", "session recovered from disk");
+      const recoveryHint = pointer.state === "paused"
+        ? "session recovered from paused state"
+        : "session recovered from disk";
+      await this.writePointerAndIndex(nextSession, "recovered", recoveryHint);
       return { session: nextSession, lifecycleState: "recovered", reason: "current session recovered" };
     });
   }
@@ -248,6 +251,9 @@ export class SessionLifecycle {
     if (rawPointer === null) return "none";
     if (!isCurrentSessionPointer(rawPointer)) return "none";
     if (rawPointer.projectPath !== this.repoPath) return "none";
+    if (rawPointer.state === "recovered" && rawPointer.recoveryHint === "session recovered from paused state") {
+      return "paused";
+    }
     return rawPointer.state;
   }
 

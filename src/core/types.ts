@@ -441,6 +441,7 @@ export interface ReadOnlyDelegationRequest {
   status: "requested" | "running" | "completed" | "failed" | "cancelled";
   createdAt: string;
   completedAt?: string;
+  resultDigest?: string;
 }
 
 export interface ReadOnlyDelegationResult {

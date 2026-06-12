@@ -450,10 +450,15 @@ describe("ConductorRuntime", () => {
       ...result,
       completedAt: "2026-06-12T00:06:00.000Z",
     })).rejects.toThrow("already terminal");
+    await expect(conductor.ingestDelegationResult({
+      ...result,
+      summary: "Trace API is stale.",
+    })).rejects.toThrow("terminal result payload mismatch");
 
     const [thread] = await threads.readAll();
     expect(thread.evidence).toHaveLength(1);
     expect(thread.delegationHistory).toHaveLength(1);
+    expect(thread.currentJudgment).not.toContain("Trace API is stale.");
   });
 
   it("reuses an existing pending delegation instead of appending duplicates", async () => {
