@@ -1,8 +1,17 @@
 import fs from "node:fs/promises";
+import type { Server } from "node:http";
 import os from "node:os";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
 import { createApp } from "../../src/server/app";
+
+async function closeServer(server: Server | undefined): Promise<void> {
+  if (!server?.listening) return;
+
+  await new Promise<void>((resolve, reject) => {
+    server.close((error) => error ? reject(error) : resolve());
+  });
+}
 
 describe("server app", () => {
   it("starts and resumes a current session through the API", async () => {
@@ -102,22 +111,35 @@ describe("server app", () => {
     await fs.mkdir(home);
     await fs.writeFile(path.join(repo, "README.md"), "# Demo\n");
 
-    const firstApp = createApp({ repoPath: repo, homeDir: home });
-    const firstServer = firstApp.listen(0);
-    const firstAddress = firstServer.address();
-    if (!firstAddress || typeof firstAddress === "string") throw new Error("Expected TCP address.");
-    const start = await fetch(`http://127.0.0.1:${firstAddress.port}/api/session/start`, { method: "POST" });
-    const started = await start.json() as { id: string };
-    firstServer.close();
+    let firstServer: Server | undefined;
+    let secondServer: Server | undefined;
 
-    const secondApp = createApp({ repoPath: repo, homeDir: home });
-    const secondServer = secondApp.listen(0);
-    const secondAddress = secondServer.address();
-    if (!secondAddress || typeof secondAddress === "string") throw new Error("Expected TCP address.");
-    const current = await fetch(`http://127.0.0.1:${secondAddress.port}/api/session/current`);
-    const recovered = await current.json() as { id: string };
-    secondServer.close();
+    try {
+      const firstApp = createApp({ repoPath: repo, homeDir: home });
+      firstServer = firstApp.listen(0);
+      const firstAddress = firstServer.address();
+      if (!firstAddress || typeof firstAddress === "string") throw new Error("Expected TCP address.");
+      const start = await fetch(`http://127.0.0.1:${firstAddress.port}/api/session/start`, { method: "POST" });
+      expect(start.status).toBe(200);
+      const started = await start.json() as { id?: unknown };
+      expect(typeof started.id).toBe("string");
+      expect(started.id).not.toBe("");
+      await closeServer(firstServer);
+      firstServer = undefined;
 
-    expect(recovered.id).toBe(started.id);
+      const secondApp = createApp({ repoPath: repo, homeDir: home });
+      secondServer = secondApp.listen(0);
+      const secondAddress = secondServer.address();
+      if (!secondAddress || typeof secondAddress === "string") throw new Error("Expected TCP address.");
+      const current = await fetch(`http://127.0.0.1:${secondAddress.port}/api/session/current`);
+      expect(current.status).toBe(200);
+      const recovered = await current.json() as { id?: unknown };
+      expect(typeof recovered.id).toBe("string");
+      expect(recovered.id).not.toBe("");
+
+      expect(recovered.id).toBe(started.id);
+    } finally {
+      await Promise.all([closeServer(firstServer), closeServer(secondServer)]);
+    }
   });
 });
