@@ -25,6 +25,11 @@ export interface SessionRecoveryResult {
   reason: string;
 }
 
+export interface CurrentLifecycleIdentity {
+  sessionId?: string;
+  lifecycleState: SessionLifecycleState | "none";
+}
+
 const maxRecoverableSessionAgeMs = 12 * 60 * 60 * 1000;
 
 function isRecord(value: unknown): value is Record<string, unknown> {
@@ -247,14 +252,25 @@ export class SessionLifecycle {
   }
 
   async currentLifecycleState(): Promise<SessionLifecycleState | "none"> {
+    return (await this.currentLifecycleIdentity()).lifecycleState;
+  }
+
+  async currentLifecycleIdentity(): Promise<CurrentLifecycleIdentity> {
     const rawPointer = await this.coordinator.readJson<unknown | null>(getCurrentSessionPath(this.repoPath), null);
-    if (rawPointer === null) return "none";
-    if (!isCurrentSessionPointer(rawPointer)) return "none";
-    if (rawPointer.projectPath !== this.repoPath) return "none";
-    if (rawPointer.state === "recovered" && rawPointer.recoveryHint === "session recovered from paused state") {
+    if (rawPointer === null) return { lifecycleState: "none" };
+    if (!isCurrentSessionPointer(rawPointer)) return { lifecycleState: "none" };
+    if (rawPointer.projectPath !== this.repoPath) return { lifecycleState: "none" };
+    return {
+      sessionId: rawPointer.sessionId,
+      lifecycleState: this.visibleLifecycleState(rawPointer),
+    };
+  }
+
+  private visibleLifecycleState(pointer: CurrentSessionPointer): SessionLifecycleState {
+    if (pointer.state === "recovered" && pointer.recoveryHint === "session recovered from paused state") {
       return "paused";
     }
-    return rawPointer.state;
+    return pointer.state;
   }
 
   private async recoverExpiredPointer(pointer: CurrentSessionPointer): Promise<SessionRecoveryResult> {

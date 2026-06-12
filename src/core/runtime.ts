@@ -251,7 +251,11 @@ export class AlongRuntime {
       throw new Error("Cannot run conductor heartbeat after session wrap-up.");
     }
     return await this.withRuntimeLockContentionRetry(`runtime:conductor-heartbeat:${currentSession.id}`, async () => {
-      this.assertCanRunConductorHeartbeat(await this.lifecycle.currentLifecycleState());
+      const currentIdentity = await this.lifecycle.currentLifecycleIdentity();
+      this.assertCanRunConductorHeartbeat(currentIdentity.lifecycleState);
+      if (currentIdentity.sessionId !== currentSession.id) {
+        throw new Error("Cannot run conductor heartbeat because current session changed.");
+      }
       if (currentSession.state === "wrap_up") {
         throw new Error("Cannot run conductor heartbeat after session wrap-up.");
       }

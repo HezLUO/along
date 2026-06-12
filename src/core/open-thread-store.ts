@@ -184,7 +184,12 @@ export class OpenThreadStore {
     delegation: OpenThreadDelegationRef,
   ): OpenThread["status"] {
     if (delegation.status === "failed") return "needs_user";
-    if (delegation.status === "cancelled" && currentStatus === "needs_user") return "needs_user";
+    if (
+      (delegation.status === "completed" || delegation.status === "cancelled")
+      && currentStatus === "needs_user"
+    ) {
+      return "needs_user";
+    }
     if (delegation.status === "completed" || delegation.status === "cancelled") return "watching";
     return "delegated";
   }
