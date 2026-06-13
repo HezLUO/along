@@ -1,7 +1,9 @@
+import type { OpenThreadStatus, ReadOnlyDelegationRequest, ThreadAttentionAction } from "../core/types";
+
 export interface OpenThreadInput {
   id: string;
   title: string;
-  status: string;
+  status: OpenThreadStatus;
   whyItMatters: string;
   currentJudgment: string;
   risks: Array<{ id: string; summary: string; severity: string }>;
@@ -10,7 +12,7 @@ export interface OpenThreadInput {
 
 export interface AttentionInput {
   threadId: string;
-  action: string;
+  action: ThreadAttentionAction;
   score: number;
   reasons: string[];
 }
@@ -18,8 +20,8 @@ export interface AttentionInput {
 export interface DelegationInput {
   id: string;
   threadId: string;
-  target: string;
-  status: string;
+  target: ReadOnlyDelegationRequest["target"];
+  status: ReadOnlyDelegationRequest["status"];
   reason: string;
   scope: string[];
   forbiddenActions?: string[];
@@ -45,11 +47,11 @@ export interface SharedDeskOverrides {
 export interface SharedDeskThread {
   id: string;
   title: string;
-  status: string;
+  status: OpenThreadStatus;
   currentJudgment: string;
   whyItMatters: string;
   selectionReason: string;
-  attentionAction: string;
+  attentionAction: ThreadAttentionAction;
   attentionScore: number;
   delegation?: DelegationInput;
 }
@@ -68,10 +70,9 @@ interface RankedThread {
   index: number;
 }
 
-const QUIET_MESSAGE =
-  "I'm here. I do not see a thread worth interrupting you for right now. There is no thread worth interrupting.";
+const QUIET_MESSAGE = "I'm here. I do not see a thread worth interrupting you for right now.";
 
-const actionRank: Record<string, number> = {
+const actionRank: Record<ThreadAttentionAction, number> = {
   intervention: 70,
   digest: 60,
   read_only_delegation: 50,
@@ -79,7 +80,7 @@ const actionRank: Record<string, number> = {
   silent: 0,
 };
 
-const statusRank: Record<string, number> = {
+const statusRank: Record<OpenThreadStatus, number> = {
   needs_user: 45,
   delegated: 35,
   watching: 20,
@@ -234,6 +235,5 @@ function isStrongEnoughForMain(thread: SharedDeskThread): boolean {
 function isStrongEnoughForWatch(thread: SharedDeskThread): boolean {
   if (thread.status === "needs_user" || thread.status === "delegated") return true;
   if (thread.attentionAction === "silent") return false;
-  if (thread.attentionAction === "unscored") return false;
   return thread.attentionScore >= 3;
 }

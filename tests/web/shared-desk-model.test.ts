@@ -68,12 +68,14 @@ describe("buildSharedDeskModel", () => {
         threads: [
           thread({ id: "main", title: "Main candidate", status: "needs_user" }),
           thread({ id: "delegated-silent", title: "Delegated silent", status: "delegated" }),
-          thread({ id: "open-unscored", title: "Open unscored", status: "open" }),
+          thread({ id: "open-silent", title: "Open silent", status: "open" }),
+          thread({ id: "open-low-score", title: "Open low score", status: "open" }),
         ],
         attention: [
           { threadId: "main", action: "intervention", score: 11, reasons: ["changed judgment"] },
           { threadId: "delegated-silent", action: "silent", score: 0, reasons: [] },
-          { threadId: "open-unscored", action: "unscored", score: 9, reasons: [] },
+          { threadId: "open-silent", action: "silent", score: 9, reasons: [] },
+          { threadId: "open-low-score", action: "thread_update", score: 2, reasons: [] },
         ],
         delegations: [],
       }),
@@ -102,7 +104,7 @@ describe("buildSharedDeskModel", () => {
     expect(model.mode).toBe("quiet");
     expect(model.mainThread).toBeUndefined();
     expect(model.watchThreads).toEqual([]);
-    expect(model.quietMessage).toContain("no thread worth interrupting");
+    expect(model.quietMessage).toBe("I'm here. I do not see a thread worth interrupting you for right now.");
   });
 
   it("lets a user force a watch thread to become main", () => {
