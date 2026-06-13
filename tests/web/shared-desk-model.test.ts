@@ -62,6 +62,26 @@ describe("buildSharedDeskModel", () => {
     expect(model.watchThreads).toHaveLength(2);
   });
 
+  it("qualifies watch threads by status before attention action", () => {
+    const model = buildSharedDeskModel({
+      conductor: snapshot({
+        threads: [
+          thread({ id: "main", title: "Main candidate", status: "needs_user" }),
+          thread({ id: "delegated-silent", title: "Delegated silent", status: "delegated" }),
+          thread({ id: "open-unscored", title: "Open unscored", status: "open" }),
+        ],
+        attention: [
+          { threadId: "main", action: "intervention", score: 11, reasons: ["changed judgment"] },
+          { threadId: "delegated-silent", action: "silent", score: 0, reasons: [] },
+          { threadId: "open-unscored", action: "unscored", score: 9, reasons: [] },
+        ],
+        delegations: [],
+      }),
+    });
+
+    expect(model.watchThreads.map((item) => item.id)).toEqual(["delegated-silent"]);
+  });
+
   it("attaches the matching read-only delegation to the main thread", () => {
     const model = buildSharedDeskModel({ conductor: snapshot() });
 

@@ -4,8 +4,8 @@ export interface OpenThreadInput {
   status: string;
   whyItMatters: string;
   currentJudgment: string;
-  risks: unknown[];
-  evidence: unknown[];
+  risks: Array<{ id: string; summary: string; severity: string }>;
+  evidence: Array<{ id: string; summary: string; strength: string }>;
 }
 
 export interface AttentionInput {
@@ -232,9 +232,8 @@ function isStrongEnoughForMain(thread: SharedDeskThread): boolean {
 }
 
 function isStrongEnoughForWatch(thread: SharedDeskThread): boolean {
-  return (
-    (thread.status === "needs_user" || thread.status === "delegated") &&
-      thread.attentionAction !== "silent" &&
-      thread.attentionScore > 0
-  ) || thread.attentionScore >= 3;
+  if (thread.status === "needs_user" || thread.status === "delegated") return true;
+  if (thread.attentionAction === "silent") return false;
+  if (thread.attentionAction === "unscored") return false;
+  return thread.attentionScore >= 3;
 }
