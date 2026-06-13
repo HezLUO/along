@@ -2,7 +2,7 @@
 
 Date: 2026-06-11
 Status: Active cross-session record
-Last updated: 2026-06-12
+Last updated: 2026-06-13
 Project folder: `/Users/james/Codex Project/General Codex Project/Along`
 
 ## Purpose
@@ -15,9 +15,9 @@ Use this file in future sessions before continuing product design, implementatio
 
 ## Current Goal
 
-Living Conductor Foundation is merged locally into `main`, verified, and product-calibrated against Along itself. The current goal is Product Expression Tightening before any new capability expansion.
+Living Conductor Foundation and Product Expression Tightening are both merged locally into `main`, verified, and calibrated against Along itself. The current goal is to continue product-feel calibration around living presence and explanation before any new capability expansion.
 
-Default next step: choose execution approach for the Product Expression Tightening implementation plan. Do not start Memory v2, Hermes adapter, Conductor Packs, or write delegation while executing this plan.
+Default next step: design a focused Living Presence and Explanation Pass. Do not start Memory v2, Hermes adapter, Conductor Packs, or write delegation before deciding this pass.
 
 ## Core Product Definition
 
@@ -297,7 +297,9 @@ Status:
 
 - spec approved by user on 2026-06-13;
 - implementation plan written;
-- not yet implemented.
+- implemented in focused execution worktree;
+- independently reviewed by the main session;
+- merged locally into `main` on 2026-06-13.
 
 Approved direction:
 
@@ -331,12 +333,67 @@ Plan summary:
 - add Shared Desk responsive styling;
 - verify with focused view-model tests, typecheck, build, runtime smoke, and desktop/mobile browser checks.
 
+Implementation worktree:
+
+`/Users/james/Codex Project/General Codex Project/Along-worktrees/product-expression-tightening`
+
+Implementation branch:
+
+`product-expression-tightening`
+
+Final implementation HEAD:
+
+`dfdf3a5bb4c77e26f9e90785b8eaa5e53fa113a8` `style: tighten shared desk layout`
+
+Local merge commit:
+
+`a829be6` `Merge branch 'product-expression-tightening'`
+
+Post-merge verification on `main`:
+
+- `npm test -- tests/web/shared-desk-model.test.ts` passed: 1 test file, 6 tests.
+- `npm run typecheck` passed.
+- `npm run build` passed.
+- Full `npm test` passed after sandbox escalation for Express server listening: 22 test files, 231 tests.
+
+Main-session browser calibration:
+
+- Shared Desk is now the first product surface.
+- One dominant Along judgment and up to two watch threads are visible before secondary surfaces.
+- `Project intelligence` and `Delegation live view` are demoted to closed secondary panels.
+- Read-only delegation boundary remains visible.
+- Desktop and mobile `390x844` showed no horizontal overflow and no console errors.
+- `Not now`, `Hide`, `Make this main`, and `Check gently` remained stable in browser checks.
+
+Post-merge calibration report:
+
+`docs/superpowers/notes/2026-06-13-product-expression-post-merge-calibration.md`
+
+Post-merge calibration conclusion:
+
+Product Expression Tightening should stay merged. It materially improves Along's product feeling by shifting the first read from a conductor dashboard to a shared workspace. It is closer to "living companion + conductor," but not finished.
+
+Remaining product-feel gaps:
+
+- recovered sessions need freshness or age cues when project context is old;
+- `Ask why` should become a real explanation surface;
+- the generic curiosity should align better with the selected Open Thread judgment;
+- user overrides such as `Not now`, `Hide`, and `Make this main` are useful but not durable;
+- the next leap should come from presence and explanation behavior, not broader execution capability.
+
+Recommended next design topic:
+
+Living Presence and Explanation Pass.
+
 ## Pending Decisions
 
 - how to migrate or reinterpret Curiosity Queue beyond this foundation;
 - Hermes adapter execution method;
 - thresholds for digest and intervention beyond deterministic V1 defaults;
 - how to express self-initiation as ambient presence rather than a manual dashboard action;
+- how resumed-session freshness and snapshot age should be exposed to users;
+- how `Ask why` should explain attention, evidence, delegation, and silence choices;
+- whether the main curiosity should be derived from the selected Open Thread when one exists;
 - how to batch, prioritize, or suppress multiple equally eligible Open Threads;
 - how stop, edit, rerun, and takeover controls should appear in Delegation Live View;
 - whether persisted conductor snapshots should update after delegation-result ingestion or remain heartbeat snapshots only;
@@ -367,3 +424,6 @@ Plan summary:
 - 2026-06-12: First Along-self product calibration completed; recommendation is Product Expression Tightening before capability expansion.
 - 2026-06-12: Drafted Product Expression Tightening spec around Shared Desk First; pending user review before implementation planning.
 - 2026-06-13: User approved the Product Expression Tightening spec; wrote implementation plan for Shared Desk First.
+- 2026-06-13: Focused execution session completed Product Expression Tightening at `dfdf3a5`; main session independently reviewed, verified, and browser-calibrated the branch.
+- 2026-06-13: Merged `product-expression-tightening` into `main` locally at `a829be6`; post-merge targeted test, typecheck, build, and full test suite passed.
+- 2026-06-13: Completed post-merge product calibration; Shared Desk should stay merged, and next recommended design topic is Living Presence and Explanation Pass.
