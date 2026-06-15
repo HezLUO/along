@@ -369,6 +369,35 @@ Does this match what you want to stay with?
 
 This keeps conversation important while avoiding the feeling that Along is just another generic chat agent.
 
+Accepted ongoing Working Thread conversation structure:
+
+- default to a lightweight top **thread anchor**;
+- use occasional in-stream state updates only when Along's judgment, boundary, delegation state, or thread status meaningfully changes;
+- do not use a default side rail in the current pass;
+- do not let the conversation become a blank generic chat detached from the Working Thread.
+
+Thread anchor purpose:
+
+- remind the user which Working Thread the conversation belongs to;
+- keep Along's current judgment visible;
+- keep the active boundary visible;
+- prevent drift into generic user-prompt/assistant-answer behavior.
+
+Example anchor:
+
+```text
+Along still feels like a dashboard
+Judgment: presence and explanation first
+Boundary: product design only
+```
+
+In-stream state updates are supplemental, not the main structure:
+
+```text
+Along updated its judgment:
+The issue is not chat itself, but whether chat is anchored to a working thread.
+```
+
 Preferred flow:
 
 ```text
@@ -473,7 +502,8 @@ Continue from these questions, one at a time:
 
 2. What is the minimum Working Thread UI needed to make conversation feel thread-based rather than generic chat?
    - Current direction: conversation is anchored by Thread Brief and starts from a co-creator prompt.
-   - Still needs concrete design for ongoing conversation layout, controls, and delegation affordances.
+   - Ongoing conversation should default to a lightweight top thread anchor plus occasional in-stream state updates.
+   - Still needs concrete design for controls and delegation affordances.
 
 3. How should user-initiated Working Thread creation appear?
    - input field?
@@ -505,7 +535,7 @@ The next immediate discussion should continue clarifying **Tiny Presence Capsule
 
 - what the Presence Peek should contain;
 - exact co-creator action wording;
-- concrete ongoing Working Thread conversation layout after the co-creator prompt;
+- concrete Working Thread controls and delegation affordances after the co-creator prompt;
 - how `Adjust quietness` should work later, without making the default flow feel like reminders;
 - how this differs from chat messages and automation reminders.
 
