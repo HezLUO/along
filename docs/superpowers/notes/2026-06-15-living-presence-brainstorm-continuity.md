@@ -315,6 +315,15 @@ Accepted `Stay with this` semantics:
 - The brief must be concise enough to avoid dashboard feeling.
 - From the brief, the user can naturally continue into conversation.
 
+Accepted minimum Thread Brief contents:
+
+1. **Thread title**: what we are looking at.
+2. **Along's current judgment**: what Along currently believes the real issue is.
+3. **Why now**: why this deserves attention now.
+4. **Boundary / next move**: whether this is discussion, calibration, delegation, or explicitly not implementation yet.
+
+The brief should not become a report or mini-dashboard. It is a compact transition from presence into conversation.
+
 Preferred flow:
 
 ```text
@@ -412,7 +421,8 @@ Continue from these questions, one at a time:
    - Current broad direction: Tiny Presence Capsule -> Presence Peek -> Working Thread.
    - `Hold it quietly` semantics are broadly accepted.
    - `Stay with this` semantics are broadly accepted: open a concise Thread Brief before conversation.
-   - Still needs concrete design for peek content, final action wording, and Thread Brief content.
+   - Thread Brief minimum contents are broadly accepted: title, current judgment, why now, boundary/next move.
+   - Still needs concrete design for peek content and final action wording.
 
 2. What is the minimum Working Thread UI needed to make conversation feel thread-based rather than generic chat?
 
@@ -446,7 +456,7 @@ The next immediate discussion should continue clarifying **Tiny Presence Capsule
 
 - what the Presence Peek should contain;
 - exact co-creator action wording;
-- what the short Thread Brief must contain before conversation;
+- how the short Thread Brief avoids report/dashboard feeling;
 - how `Adjust quietness` should work later, without making the default flow feel like reminders;
 - how this differs from chat messages and automation reminders.
 
