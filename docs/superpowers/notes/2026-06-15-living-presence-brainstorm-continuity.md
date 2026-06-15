@@ -353,6 +353,22 @@ Evidence:
 Actions:
 ```
 
+Accepted conversation entry after Thread Brief:
+
+- do not default to a blank generic chat input as the primary visual object;
+- after the brief, Along should offer a co-creator prompt that invites response;
+- the prompt should confirm whether the framing matches what the user wants to stay with;
+- the user can then respond naturally, but the conversation is anchored to the Working Thread.
+
+Preferred pattern:
+
+```text
+Along:
+Does this match what you want to stay with?
+```
+
+This keeps conversation important while avoiding the feeling that Along is just another generic chat agent.
+
 Preferred flow:
 
 ```text
@@ -452,9 +468,12 @@ Continue from these questions, one at a time:
    - `Stay with this` semantics are broadly accepted: open a concise Thread Brief before conversation.
    - Thread Brief minimum contents are broadly accepted: title, current judgment, why now, boundary/next move.
    - Thread Brief expression is broadly accepted: short co-creator briefing, not dashboard/table/report.
+   - Conversation entry after Thread Brief is broadly accepted: Along asks a co-creator prompt rather than showing a generic blank chat first.
    - Still needs concrete design for peek content and final action wording.
 
 2. What is the minimum Working Thread UI needed to make conversation feel thread-based rather than generic chat?
+   - Current direction: conversation is anchored by Thread Brief and starts from a co-creator prompt.
+   - Still needs concrete design for ongoing conversation layout, controls, and delegation affordances.
 
 3. How should user-initiated Working Thread creation appear?
    - input field?
@@ -486,7 +505,7 @@ The next immediate discussion should continue clarifying **Tiny Presence Capsule
 
 - what the Presence Peek should contain;
 - exact co-creator action wording;
-- concrete Working Thread conversation entry after the short briefing;
+- concrete ongoing Working Thread conversation layout after the co-creator prompt;
 - how `Adjust quietness` should work later, without making the default flow feel like reminders;
 - how this differs from chat messages and automation reminders.
 
