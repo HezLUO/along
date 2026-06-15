@@ -306,6 +306,31 @@ Hold it quietly
 -> I will keep it quiet for now. Adjust
 ```
 
+Accepted `Stay with this` semantics:
+
+- `Stay with this` should not open a generic chat directly.
+- It should make the presence signal the current active Working Thread.
+- The first screen should be a short **Thread Brief**, not a full workspace.
+- The brief should establish the thread as a working object before conversation starts.
+- The brief must be concise enough to avoid dashboard feeling.
+- From the brief, the user can naturally continue into conversation.
+
+Preferred flow:
+
+```text
+Tiny Presence Capsule
+-> Presence Peek
+-> Stay with this
+-> Thread Brief
+-> Continue conversation
+```
+
+Current rejected defaults:
+
+- direct generic chat as the first view, because it risks Codex/Hermes-style sameness;
+- full thread workspace as the first view, because it risks clutter and dashboard feeling;
+- expanding the current page indefinitely, because it weakens long-term thread identity.
+
 Working Thread is the deeper layer. Full reasoning, evidence, conversation, delegation suggestions, and wrap-up belong there, not in the outer popover.
 
 Side panel remains a possible future desktop enhancement, not the default. Scroll-to-section is not preferred as the default.
@@ -386,7 +411,8 @@ Continue from these questions, one at a time:
 1. How exactly should Tiny Presence Capsule expand?
    - Current broad direction: Tiny Presence Capsule -> Presence Peek -> Working Thread.
    - `Hold it quietly` semantics are broadly accepted.
-   - Still needs concrete design for peek content, final action wording, and transition into Working Thread.
+   - `Stay with this` semantics are broadly accepted: open a concise Thread Brief before conversation.
+   - Still needs concrete design for peek content, final action wording, and Thread Brief content.
 
 2. What is the minimum Working Thread UI needed to make conversation feel thread-based rather than generic chat?
 
@@ -420,7 +446,7 @@ The next immediate discussion should continue clarifying **Tiny Presence Capsule
 
 - what the Presence Peek should contain;
 - exact co-creator action wording;
-- how `Stay with this` transitions into Working Thread;
+- what the short Thread Brief must contain before conversation;
 - how `Adjust quietness` should work later, without making the default flow feel like reminders;
 - how this differs from chat messages and automation reminders.
 
