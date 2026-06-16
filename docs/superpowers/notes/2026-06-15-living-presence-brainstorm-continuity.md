@@ -487,6 +487,73 @@ Current pass should implement or design only default Balanced behavior:
 - confirmation challenge for important drift;
 - no full settings UI.
 
+## Product Shape Pivot: Existing-Agent Layer
+
+User interrupted the previous "build a new agent" direction and raised a concern:
+
+- building a full Codex/Hermes/Claude Code competitor may be unrealistic;
+- Along's real opportunity may be to add self-initiation and companionship around existing agents;
+- it is unclear whether Along should be a plugin, skill, MCP server, CLI layer, desktop surface, or something else.
+
+Current working answer:
+
+> Along should not be framed as "another coding agent" first. It should be framed as a self-initiation and companionship layer that can sit around existing agents.
+
+Provisional architecture vocabulary:
+
+```text
+Along Core
+  Working Threads
+  attention state
+  judgments
+  memory / wrap-up
+  delegation decisions
+
+Along Integration Layer
+  MCP server
+  Codex plugin / skills
+  future Hermes adapter
+  CLI hooks or commands
+
+Along Surface
+  optional local / desktop / browser presence view
+  Tiny Presence Capsule
+  Presence Peek
+  Thread Brief
+```
+
+Important clarification:
+
+- A local/desktop surface is not a strict requirement for self-initiation.
+- Self-initiation can exist through agent integrations: plugin behavior, MCP tools, CLI commands, conversation notes, persisted working threads, and review/attention hooks.
+- Companionship can also exist without a desktop surface if the existing agent can consistently carry memory, tone, attention, and thread continuity.
+- A local/desktop surface is useful only if the first product goal is to make Along feel visibly present outside a single agent conversation.
+- If Along's first goal is to make existing agents more self-initiated, then the integration layer may be more important than a standalone surface.
+
+Risk of a separate surface:
+
+- If the surface is too central, users may feel the connected agent itself did not become self-initiated; they may feel "Along is watching next to Codex" rather than "Codex is behaving with Along-like initiative."
+- The product could split identity between "agent I work with" and "Along dashboard beside it."
+- This risk is especially high if the surface becomes a dashboard, inbox, reminder panel, or task manager.
+
+Revised product principle:
+
+> Local/desktop presence should be treated as an optional expression and validation harness, not as the essence of Along.
+
+The essence of Along is:
+
+- persisted working threads;
+- judgment-based attention;
+- restrained proactive intervention;
+- memory of what matters;
+- ability to hand work to existing agents and absorb their results back into Along's judgment.
+
+Open strategic choice:
+
+- If the first milestone is **felt presence**, use a small local surface as the fastest subjective test.
+- If the first milestone is **existing agents gaining self-initiation**, prioritize MCP/plugin/skill integration and treat the surface as secondary.
+- If the first milestone is **conductor behavior**, build the minimum integration path where Along can decide when and how to involve Codex/Hermes.
+
 ## Key Open Questions
 
 Continue from these questions, one at a time:
