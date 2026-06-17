@@ -586,6 +586,32 @@ Reasoning:
 - It avoids conflating self-initiation with background automation too early.
 - It keeps true "living presence" as a later product layer rather than blocking the first usable integration.
 
+Accepted V1 host strategy:
+
+- **Codex-first for validation**: first prove Along-like self-initiation inside the user's current high-frequency Codex workflow.
+- **Generic-agent interface in concept and naming**: model capabilities as agent-agnostic Along Core operations rather than Codex-only behavior.
+- **Hermes remains a future adapter target**: do not ignore Hermes, but do not make the first pass depend on Hermes integration.
+
+Implication:
+
+> V1 may be experienced through Codex first, but the design should read as "an existing agent calls Along Core" rather than "Codex has a special hard-coded Along mode."
+
+Likely generic concepts:
+
+- `Working Thread`
+- `Agent Session`
+- `Attention State`
+- `Along Judgment`
+- `Confirmation Challenge`
+- `Wrap-up`
+- `Delegation Candidate`
+- `Carry-forward Memory`
+
+Risk to avoid:
+
+- Do not encode the core model around Codex-specific UI concepts, thread labels, or product affordances.
+- Do not design the first pass as a Codex-only prompt pack if that prevents MCP/Hermes/other agents from later reusing the same Along Core semantics.
+
 ## Key Open Questions
 
 Continue from these questions, one at a time:
