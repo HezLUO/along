@@ -743,13 +743,36 @@ Do you want me to record it as one so future sessions can carry it forward?
 
 After a Working Thread already exists, Codex may update it during wrap-up under the accepted V1 behavior loop, while still summarizing the intended update before writing durable docs.
 
+Accepted Working Thread suggestion triggers:
+
+Codex should use **combined high-signal triggers** before suggesting a Working Thread.
+
+Suggest creating a Working Thread only when at least one strong signal is present:
+
+- the user explicitly indicates long-term continuity, such as "continue later", "record this", or "we will keep discussing this";
+- the discussion is judgment-heavy, involving product direction, design tradeoffs, core doubts, identity, positioning, or repeated subjective calibration;
+- the same theme has recurred across sessions or across multiple parts of the same session;
+- the topic will materially affect future multi-turn decisions.
+
+V1 boundary:
+
+- Codex may suggest creating a Working Thread.
+- Codex must not silently create the first durable Working Thread record.
+- First creation requires user confirmation.
+
+Reasoning:
+
+- This keeps self-initiation visible without turning Along into an automatic recorder.
+- High-signal triggers align with Along's purpose: preserving judgment, direction, and continuity rather than tracking every task.
+- The confirmation gate protects quietness and user control.
+
 ## Key Open Questions
 
 Continue from these questions, one at a time:
 
-1. When should Codex suggest creating a Working Thread rather than treating the exchange as a normal one-off conversation?
-   - Current direction: dual-entry model with confirmation before first creation.
-   - Need to define the minimal suggestion triggers so the skill feels proactive but not noisy.
+1. What exactly is a Working Thread, and how should it be explained in the spec?
+   - Need to make clear that it is not a chat transcript, todo, issue, spec, or generic memory.
+   - Need a precise definition usable by a Codex skill and future Along Core.
 
 2. How exactly should Tiny Presence Capsule expand? **Deferred**
    - Current broad direction: Tiny Presence Capsule -> Presence Peek -> Working Thread.
