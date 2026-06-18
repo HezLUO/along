@@ -1016,15 +1016,23 @@ Formal spec status:
 - Formal spec created at `docs/superpowers/specs/2026-06-18-along-codex-skill-first-v1-design.md`.
 - User approved the spec and requested an implementation plan.
 - Implementation plan created at `docs/superpowers/plans/2026-06-18-along-codex-skill-first-v1.md`.
-- Next gate is user review of the implementation plan and execution-mode choice. Do not start implementation until the user confirms Subagent-Driven execution or Inline Execution.
+- User approved Subagent-Driven execution in a focused execution session.
+
+Implementation status:
+
+- Repo-scoped Codex skill implemented under `.agents/skills/along-working-thread/`.
+- Docs-backed Working Thread continuity implemented under `docs/along/working-threads/`.
+- Verification completed with `npm test -- tests/skills/along-working-thread-skill.test.ts`, `npm run typecheck`, `npm run build`, and full `npm test`.
+- V1 remains skill-first and does not include Core/MCP, plugin packaging, Hermes adapter, local/desktop presence, background runtime, delegation, or write delegation.
+- Next gate is subjective validation of real Codex sessions using the Working Thread skill.
 
 ## Key Open Questions
 
 Continue from these questions, one at a time:
 
-1. User review of the skill-first V1 implementation plan.
+1. User review of the skill-first V1 implementation plan. **Completed**
    - Plan path: `docs/superpowers/plans/2026-06-18-along-codex-skill-first-v1.md`.
-   - Await user approval and execution-mode choice before creating the skill files or Working Thread records.
+   - User approved Subagent-Driven execution; skill files and Working Thread records are now implemented.
 
 2. User review of the formal skill-first V1 spec. **Completed**
    - Spec path: `docs/superpowers/specs/2026-06-18-along-codex-skill-first-v1-design.md`.
