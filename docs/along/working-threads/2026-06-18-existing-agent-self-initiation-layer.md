@@ -56,6 +56,18 @@ The Skill Behavior Tightening Pass was implemented on branch `skill-behavior-tig
 - Medium drift passed: a fresh session answered what plugin packaging might look like without switching the active plan or triggering heavy Working Thread ceremony. Minor caveat: the answer was useful but somewhat long.
 - Confirmed high-impact direction switch write-back passed: after the user explicitly confirmed a simulated switch to plugin packaging, the session drafted Working Thread update fields, kept implementation out of scope, and waited for user confirmation before writing.
 
+## Plan Audit
+
+The current staged plan can deliver a narrow but real version of self-initiation and companionship:
+
+- It can deliver turn-bound self-initiation: when an existing agent is already active, it can restore Working Thread context, notice meaningful drift, suggest wrap-up, and draft continuity updates.
+- It can deliver continuity-based companionship: the agent can remember what matters, protect shared judgment, and avoid turning every small request into process.
+- It cannot yet deliver background self-initiation: no watcher, scheduler, notification, local presence, or out-of-session intervention exists in V1.
+- It cannot yet deliver full living companion feel: no ambient presence surface, relationship/tone personalization, emotional simulation mode, or cross-agent shared core exists in V1.
+- Plugin packaging will improve installability and reuse, not the depth of self-initiation by itself.
+
+Packaging copy must therefore promise "turn-bound self-initiation for existing agents" and "continuity-aware co-creation", not a background autonomous companion.
+
 ## Open Questions
 
 - Is the medium-drift answer length acceptable, or should the skill push more concise first replies?
