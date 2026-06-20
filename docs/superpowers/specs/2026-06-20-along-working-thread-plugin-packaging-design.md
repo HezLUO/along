@@ -61,11 +61,13 @@ along-working-thread/
   skills/
     along-working-thread/
       SKILL.md
+      agents/
+        openai.yaml
       references/
         working-thread-v1.md
 ```
 
-The package should not include `.mcp.json`, `.app.json`, hooks, scripts, or assets in V1 unless the plugin validator requires a minimal file.
+The package should copy the full existing skill directory, including `agents/openai.yaml`, so the packaged skill preserves display metadata and invocation policy. The package should not include `.mcp.json`, `.app.json`, hooks, scripts, or assets in V1 unless the plugin validator requires a minimal file.
 
 ## Metadata
 
