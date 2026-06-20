@@ -43,6 +43,8 @@ Design the smallest useful Codex plugin package for the Along Working Thread ski
 
 The Skill Behavior Tightening Pass was implemented on branch `skill-behavior-tightening` and fast-forward merged into `main` at `41aed6c74986785e2aca1c418dc62947072fba6e`. Verification on `main` passed: targeted skill test 5/5, typecheck, build, and full test suite 23 files / 236 tests after rerunning outside the sandbox for Express listen permissions.
 
+The Along Working Thread personal local plugin package was created at `/Users/james/plugins/along-working-thread` with a personal marketplace entry. Plugin validation and installability checks passed; subjective fresh-session behavior validation remains the next gate.
+
 ## Validation Notes
 
 2026-06-20 first screenshot-based validation partially passed:
