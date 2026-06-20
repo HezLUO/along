@@ -9,9 +9,9 @@ Along should not try to compete directly with Codex, Hermes, or Claude Code as a
 
 ## Current Judgment
 
-V1 remains Codex-first, skill-first, docs-backed, and focused on turn-bound self-initiation. Skill-First V1 validation passed resume, wrap-up, and quietness, but high-impact drift confirmation needs tightening. The approved Skill Behavior Tightening Pass should make ordinary requests quiet, medium drift lightly contextual, and high drift confirmation-gated before any drifted direction planning.
+V1 remains Codex-first, skill-first, docs-backed, and focused on turn-bound self-initiation. Skill-First V1 validation passed resume, wrap-up, and quietness, but high-impact drift confirmation needed tightening. The Skill Behavior Tightening Pass has now been implemented and fast-forward merged into `main`.
 
-The next step is implementation of the Skill Behavior Tightening Pass, not Core/MCP or plugin packaging.
+The next step is subjective real-session validation of the tightened behavior, not Core/MCP or plugin packaging.
 
 ## Boundary
 
@@ -36,15 +36,16 @@ The next step is implementation of the Skill Behavior Tightening Pass, not Core/
 
 ## Next Likely Move
 
-Implement the Skill Behavior Tightening Pass by updating the Along Working Thread skill, adding drift ladder examples, adding bounded adaptive write-back guidance, and expanding the skill documentation tests. Then repeat real-session validation for resume, drift, wrap-up, and quietness.
+Repeat real-session validation for resume, drift, wrap-up, quietness, and ordinary tool-answer behavior. Use normal Codex sessions rather than a focused execution session, then decide whether the tightened skill behavior is good enough to move toward plugin packaging or whether another behavior pass is needed first.
 
 ## Last Wrap-Up
 
-The Skill Behavior Tightening Pass spec was approved. The accepted behavior is: ordinary and low drift stay quiet; medium drift gets one light note without confirmation; high drift pauses with a short reason and asks for direction-switch confirmation; confirmed direction switches automatically draft a bounded adaptive Working Thread update and write only after user confirmation.
+The Skill Behavior Tightening Pass was implemented on branch `skill-behavior-tightening` and fast-forward merged into `main` at `41aed6c74986785e2aca1c418dc62947072fba6e`. Verification on `main` passed: targeted skill test 5/5, typecheck, build, and full test suite 23 files / 236 tests after rerunning outside the sandbox for Express listen permissions.
 
 ## Open Questions
 
 - Does the tightened high-drift challenge stop planning Core/MCP or plugin packaging until confirmation?
 - Does the medium-drift note feel helpful rather than noisy?
 - Does ordinary request quietness remain intact?
+- Does automatic write-back drafting after confirmed high-impact drift feel useful, or does it still feel like paperwork?
 - After tightening and revalidation, should the next layer be plugin packaging or a minimal Core/MCP contract slice?
