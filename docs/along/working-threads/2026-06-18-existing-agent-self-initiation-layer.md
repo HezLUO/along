@@ -11,7 +11,7 @@ Along should not try to compete directly with Codex, Hermes, or Claude Code as a
 
 V1 remains Codex-first, skill-first, docs-backed, and focused on turn-bound self-initiation. Skill-First V1 validation passed resume, wrap-up, and quietness, and the follow-up Skill Behavior Tightening Pass fixed the high-impact drift confirmation gap well enough for V1.
 
-The next step is a direction decision: either proceed to a minimal plugin packaging design pass, or run one more behavior polish pass if the interaction still feels too verbose or artificial.
+The next step is a minimal plugin packaging design pass. This should preserve the skill-first behavior and avoid expanding into Core/MCP, Hermes, background runtime, delegation, or local presence.
 
 ## Boundary
 
@@ -36,7 +36,7 @@ The next step is a direction decision: either proceed to a minimal plugin packag
 
 ## Next Likely Move
 
-Decide whether Skill-First V1 is stable enough to package. If yes, start a minimal plugin packaging design pass that preserves the skill-first behavior and does not add Core/MCP, Hermes, background runtime, delegation, or local presence. If not, run a small behavior polish pass focused on response length, tone, and making medium-drift guidance feel less procedural.
+Design the smallest useful Codex plugin package for the Along Working Thread skill: manifest, skills placement, install/update path, metadata, validation, and explicit non-goals. Do not scaffold or implement until the packaging design is approved.
 
 ## Last Wrap-Up
 
@@ -58,4 +58,5 @@ The Skill Behavior Tightening Pass was implemented on branch `skill-behavior-tig
 ## Open Questions
 
 - Is the medium-drift answer length acceptable, or should the skill push more concise first replies?
-- Should the next layer be minimal plugin packaging design, or one small behavior polish pass first?
+- Should the first plugin package live as a personal local plugin, a repo/team marketplace plugin, or both in stages?
+- What should the plugin promise to users without overselling background self-initiation?
