@@ -17,7 +17,8 @@ The next step is a minimal plugin packaging design pass. This should preserve th
 
 - Do not build a new standalone Along agent in V1.
 - Do not implement Core/MCP in V1.
-- Do not package a plugin in V1.
+- Do not turn plugin packaging into a broad productization effort in V1.
+- The first packaging path is staged: personal local plugin first, then repo/team marketplace plugin after validation.
 - Do not implement Hermes adapter in V1.
 - Do not implement local/desktop presence surface in V1.
 - Do not implement delegation candidate or conductor workflow in V1.
@@ -36,7 +37,7 @@ The next step is a minimal plugin packaging design pass. This should preserve th
 
 ## Next Likely Move
 
-Design the smallest useful Codex plugin package for the Along Working Thread skill: manifest, skills placement, install/update path, metadata, validation, and explicit non-goals. Do not scaffold or implement until the packaging design is approved.
+Design the smallest useful Codex plugin package for the Along Working Thread skill: manifest, skills placement, personal local install/update path, metadata, validation, staged repo/team marketplace follow-up, and explicit non-goals. Do not scaffold or implement until the packaging design is approved.
 
 ## Last Wrap-Up
 
@@ -58,5 +59,4 @@ The Skill Behavior Tightening Pass was implemented on branch `skill-behavior-tig
 ## Open Questions
 
 - Is the medium-drift answer length acceptable, or should the skill push more concise first replies?
-- Should the first plugin package live as a personal local plugin, a repo/team marketplace plugin, or both in stages?
 - What should the plugin promise to users without overselling background self-initiation?
