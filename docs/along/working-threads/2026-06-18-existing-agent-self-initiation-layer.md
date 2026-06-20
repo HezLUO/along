@@ -87,6 +87,13 @@ After reviewing the fresh-session validation, the main session approved continui
 - The staged shape is: Codex plugin/skill first, then reusable Working Thread toolkit, then Along Core/MCP, then optional local companion runtime, then optional desktop/presence surface.
 - The project should avoid positioning itself as a standalone general coding agent competitor.
 
+2026-06-21 open-source first audience decision:
+
+- The first open-source packaging pass should primarily target the maintainer and a small group of developers who already understand Codex plugins or skills.
+- It should lightly support ordinary developers by using plain README language, but it should not yet become a full public education or contributor-onboarding effort.
+- Contributor-facing architecture, governance, roadmap, issue templates, and broad community packaging are deferred.
+- This keeps the next packaging pass focused on reproducibility, installability, validation, and honest positioning.
+
 ## Plan Audit
 
 The current staged plan can deliver a narrow but real version of self-initiation and companionship:
