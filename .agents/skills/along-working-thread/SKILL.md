@@ -24,7 +24,17 @@ Before acting on a Working Thread, read:
 - First Working Thread creation requires user confirmation.
 - Durable write-back requires user confirmation.
 - Major direction changes require user confirmation.
+- Do not plan the drifted direction before user confirmation.
 - Do not implement Core/MCP, plugin packaging, Hermes adapter, local/desktop presence, background runtime, or delegation as part of this skill.
+
+## Behavior Guardrails
+
+- ordinary requests stay quiet: answer directly without mentioning Working Thread, Along, drift, or wrap-up.
+- medium drift uses a light note and does not require confirmation.
+- high drift pauses, gives one short reason, and asks whether the user wants to switch direction.
+- after the user confirms a high-impact direction switch, automatically draft a Working Thread update before planning the new direction.
+- use bounded adaptive write-back: choose the smallest sufficient Working Thread update based on impact level.
+- write durable Working Thread docs only after user confirmation.
 
 ## Workflow
 
@@ -33,14 +43,18 @@ Before acting on a Working Thread, read:
 3. At session start or resume, provide a short briefing with current judgment, active boundary, and next likely move.
 4. If the user request may create a new durable Working Thread, suggest creation and ask for confirmation before writing.
 5. If the user request may drift from the active Working Thread, classify drift against the record as `none`, `low`, `medium`, or `high`.
-6. For `high` drift, issue a non-blocking confirmation challenge.
-7. At meaningful phase boundaries, suggest wrap-up when judgment continuity changed.
-8. Draft the wrap-up first. Write to docs only after user confirmation.
+6. For `none`, `low`, or ordinary requests, answer normally and stay quiet about the Working Thread.
+7. For `medium` drift, add one light boundary note without requiring confirmation, then continue answering.
+8. For `high` drift, issue a non-blocking confirmation challenge and do not plan the drifted direction before user confirmation.
+9. After confirmed high-impact direction switch, automatically draft a Working Thread update and ask before writing.
+10. At meaningful phase boundaries, suggest wrap-up when judgment continuity changed.
+11. Draft the wrap-up first. Write to docs only after user confirmation.
 
 ## Output Style
 
 - Keep resume briefings short.
 - Explain challenges by pointing to the stored Working Thread boundary.
 - Ask for confirmation instead of refusing user direction.
+- Use restrained co-creator tone: clear, warm enough, and not process-heavy.
 - Do not present Working Threads like an inbox.
 - Do not produce a report unless the user asks for one.
