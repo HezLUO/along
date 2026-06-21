@@ -13,14 +13,14 @@ V1 remains Codex-first, skill-first, docs-backed, and focused on turn-bound self
 
 Personal local plugin packaging, installability, and subjective fresh-session behavior validation are now complete. The packaged plugin preserved the V1 behaviors that matter for turn-bound self-initiation: resume, quietness for ordinary requests, medium-drift boundary retention, high-drift challenge, and confirmed-switch write-back discipline.
 
-The main session has now approved a real direction switch from packaged-plugin validation to the next packaging stage. Treat repo/team marketplace packaging as the next design target, while keeping the scope limited to packaging, distribution, installability, documentation, and validation.
+Repo-contained source packaging is also complete. The next approved design target is Along Core/MCP Minimal Contract. This should define the smallest stable contract that future Codex plugins, other agent adapters, and local runtime layers can use for Working Thread continuity, drift classification, wrap-up drafting, and confirmation gates.
 
 Long-term positioning is now approved: Along should become a local-first, open-source, existing-agent companion layer. It should help the agents users already rely on gain continuity, turn-bound self-initiation, drift awareness, wrap-up discipline, and eventually deeper companionship. It should not present itself as another general coding agent.
 
 ## Boundary
 
 - Do not build a new standalone Along agent in V1.
-- Do not implement Core/MCP in V1.
+- Do not implement a real Core/MCP server in the minimal contract design pass.
 - Do not turn plugin packaging into a broad productization effort in V1.
 - The first packaging path is staged: personal local plugin first, then repo/team marketplace plugin after validation.
 - Do not implement Hermes adapter in V1.
@@ -41,9 +41,7 @@ Long-term positioning is now approved: Along should become a local-first, open-s
 
 ## Next Likely Move
 
-Design the next staged packaging scope for repo/team marketplace packaging. Keep the design focused on package shape, metadata, README, versioning, install/update flow, source drift checks, and validation. Keep Core/MCP, background runtime or presence, Hermes or Claude Code adapters, and source-of-truth migration out of scope unless explicitly re-approved.
-
-Use the open-source positioning as packaging context: this stage should make the plugin understandable, reproducible, and shareable from the repo, without pretending it is a complete public product release.
+Design the Along Core/MCP Minimal Contract. Keep this limited to contract shape, schemas, operations, state boundaries, confirmation rules, and validation examples. Do not implement a real MCP server, runtime, background autonomy, presence surface, Hermes or Claude Code adapter, Memory v2, relationship modes, delegation, or write delegation in this pass.
 
 ## Last Wrap-Up
 
@@ -53,7 +51,7 @@ The Along Working Thread personal local plugin package was created at `/Users/ja
 
 The repo-contained Along Working Thread source package was added under `plugins/along-working-thread` while preserving `.agents/skills/along-working-thread` as the V1 source of truth. Verification covers targeted skill/package tests, plugin manifest validation, and exact source/package drift checking through `npm run verify:plugin-package`. This pass did not add automatic installation, public marketplace release, Core/MCP, runtime, presence, adapters, Memory v2, relationship modes, or delegation.
 
-After reviewing the fresh-session validation, the main session approved continuing into the next packaging stage. This approval is for design of repo/team marketplace packaging, not implementation and not Core/MCP/runtime expansion.
+After repo-contained packaging passed, the main session approved continuing into Along Core/MCP Minimal Contract design. This approval is for contract design only, not real MCP server implementation, runtime, background autonomy, presence, adapters, Memory v2, relationship modes, delegation, or write delegation.
 
 ## Validation Notes
 
