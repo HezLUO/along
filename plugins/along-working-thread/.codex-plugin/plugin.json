@@ -1,0 +1,31 @@
+{
+  "name": "along-working-thread",
+  "version": "0.1.0",
+  "description": "Carry Working Thread continuity across active Codex sessions.",
+  "skills": "./skills/",
+  "author": {
+    "name": "James"
+  },
+  "keywords": [
+    "along",
+    "working-thread",
+    "continuity",
+    "codex",
+    "self-initiation"
+  ],
+  "interface": {
+    "displayName": "Along Working Thread",
+    "shortDescription": "A continuity-aware co-creator for active Codex sessions.",
+    "longDescription": "Along Working Thread helps Codex carry project judgment across sessions, notice meaningful drift, and draft wrap-ups with your confirmation. It provides turn-bound self-initiation, not background autonomy or always-on presence.",
+    "developerName": "James",
+    "category": "Productivity",
+    "capabilities": [
+      "Interactive"
+    ],
+    "defaultPrompt": [
+      "Resume the current Working Thread.",
+      "Help me wrap up this phase.",
+      "Check whether this direction drifts from our thread."
+    ]
+  }
+}
