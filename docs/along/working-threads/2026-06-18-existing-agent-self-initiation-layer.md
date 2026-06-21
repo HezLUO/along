@@ -148,6 +148,13 @@ After repo-contained packaging passed, the main session approved continuing into
 - The contract may include `WorkingThread`, `WorkingThreadSummary`, drift classification input/result, wrap-up draft input/result, confirmation gate, and operation names.
 - Do not add tool registration, storage, runtime watcher, LLM calls, Hermes/Claude adapters, delegation, or write delegation in this pass.
 
+2026-06-21 Core/MCP minimal contract write policy decision:
+
+- Include confirmed write operations in the contract shape rather than read/draft only.
+- V1 contract writes must carry explicit confirmation evidence, such as approval state, user-approved intent, and source turn/session identifiers.
+- Silent durable writes remain disallowed by default.
+- Future versions may allow users to configure write policy, but that configurability is not part of the minimal contract design pass.
+
 ## Plan Audit
 
 The current staged plan can deliver a narrow but real version of self-initiation and companionship:
