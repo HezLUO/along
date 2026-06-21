@@ -222,6 +222,14 @@ After repo-contained packaging passed, the main session approved continuing into
 - Do not auto-merge stale proposals in the minimal contract because merge semantics would introduce runtime/storage complexity and could silently alter judgment or boundary sections.
 - The caller should regenerate a fresh proposal against the current thread state and ask for user confirmation again when needed.
 
+2026-06-21 Core/MCP minimal contract operation result envelope decision:
+
+- Use a shared minimal result envelope across Core/MCP contract operations.
+- Result fields should include `status: ok | needsConfirmation | conflict | rejected | error`, `operation`, optional `threadId`, optional `data`, optional `message`, optional `reason`, and optional `recommendedAction`.
+- This keeps success, confirmation gates, conflicts, rejections, and errors consistent across operations without introducing runtime telemetry.
+- Do not let each operation invent unrelated result shapes because future adapters would become harder to implement and test.
+- Do not add rich trace, confidence, timing, or debug telemetry in the minimal contract because that belongs to later runtime or observability layers.
+
 ## Plan Audit
 
 The current staged plan can deliver a narrow but real version of self-initiation and companionship:
