@@ -141,6 +141,13 @@ After repo-contained packaging passed, the main session approved continuing into
 - Do not use a pre-release suffix or bump to `0.2.0` for this pass.
 - Reserve minor version bumps for meaningful capability changes such as Core/MCP, runtime, presence, or cross-agent behavior.
 
+2026-06-21 Core/MCP minimal contract expression decision:
+
+- Use TypeScript types plus Markdown documentation for the first contract pass.
+- Define schemas and examples precisely enough to test and review, but do not implement a real MCP server.
+- The contract may include `WorkingThread`, `WorkingThreadSummary`, drift classification input/result, wrap-up draft input/result, confirmation gate, and operation names.
+- Do not add tool registration, storage, runtime watcher, LLM calls, Hermes/Claude adapters, delegation, or write delegation in this pass.
+
 ## Plan Audit
 
 The current staged plan can deliver a narrow but real version of self-initiation and companionship:
