@@ -418,6 +418,173 @@ Required examples:
 - Confirmed write-back: `applyConfirmedWorkingThreadUpdate` succeeds with a valid confirmation envelope.
 - Stale write-back: `applyConfirmedWorkingThreadUpdate` returns `conflict` and does not write.
 
+### Resume/List Example
+
+```json
+{
+  "status": "ok",
+  "operation": "listWorkingThreads",
+  "data": [
+    {
+      "id": "thread-existing-agent-self-initiation",
+      "title": "Existing-Agent Self-Initiation Layer",
+      "status": "active",
+      "lastUpdated": "2026-06-21T12:00:00.000Z",
+      "currentJudgmentBrief": "Type-only contract next; no real server yet.",
+      "nextLikelyMove": "Add the type-only contract, tests, and spec examples.",
+      "riskLevel": "medium",
+      "needsUserDecision": false
+    }
+  ]
+}
+```
+
+### Quietness Example
+
+```json
+{
+  "status": "ok",
+  "operation": "classifyDrift",
+  "threadId": "thread-existing-agent-self-initiation",
+  "data": {
+    "driftLevel": "none",
+    "reason": "The user asked an ordinary repository question.",
+    "recommendedAction": "answerDirectly",
+    "needsUserConfirmation": false
+  }
+}
+```
+
+### Medium Drift Example
+
+```json
+{
+  "status": "ok",
+  "operation": "classifyDrift",
+  "threadId": "thread-existing-agent-self-initiation",
+  "data": {
+    "driftLevel": "medium",
+    "reason": "The user asked about a related future package shape without confirming a direction switch.",
+    "recommendedAction": "answerWithBoundary",
+    "needsUserConfirmation": false
+  }
+}
+```
+
+### High-Impact Drift Example
+
+```json
+{
+  "status": "ok",
+  "operation": "classifyDrift",
+  "threadId": "thread-existing-agent-self-initiation",
+  "data": {
+    "driftLevel": "high",
+    "reason": "The user proposed skipping the minimal contract and building a real MCP server.",
+    "recommendedAction": "askConfirmation",
+    "needsUserConfirmation": true
+  }
+}
+```
+
+### Wrap-Up Draft Example
+
+```json
+{
+  "status": "ok",
+  "operation": "draftWrapUp",
+  "threadId": "thread-existing-agent-self-initiation",
+  "data": {
+    "summary": "The minimal Core/MCP contract design was approved.",
+    "judgmentChange": "Move from design approval to type-only contract implementation.",
+    "boundaryChange": "Keep real MCP server, runtime, storage, adapters, and presence out of scope.",
+    "nextLikelyMove": "Implement the type-only contract and tests.",
+    "openQuestionsChange": "Decide later when to design the real MCP server layer.",
+    "requiresConfirmation": true
+  }
+}
+```
+
+### Update Proposal Example
+
+```json
+{
+  "status": "needsConfirmation",
+  "operation": "proposeWorkingThreadUpdate",
+  "threadId": "thread-existing-agent-self-initiation",
+  "message": "Write these Working Thread updates?",
+  "data": {
+    "proposalId": "proposal-1",
+    "threadId": "thread-existing-agent-self-initiation",
+    "baseLastUpdated": "2026-06-21T12:00:00.000Z",
+    "changes": [
+      {
+        "section": "currentJudgment",
+        "currentValue": "The next layer is a type-only Core/MCP minimal contract.",
+        "proposedValue": "The type-only Core/MCP minimal contract has been implemented and verified.",
+        "rationale": "The contract implementation passed tests without crossing runtime boundaries."
+      }
+    ],
+    "confirmationPrompt": "Write these Working Thread updates?",
+    "riskLevel": "medium"
+  }
+}
+```
+
+### Confirmed Write-Back Example
+
+```json
+{
+  "status": "ok",
+  "operation": "applyConfirmedWorkingThreadUpdate",
+  "threadId": "thread-existing-agent-self-initiation",
+  "data": {
+    "appliedProposalId": "proposal-1",
+    "thread": {
+      "id": "thread-existing-agent-self-initiation",
+      "title": "Existing-Agent Self-Initiation Layer",
+      "status": "active",
+      "lastUpdated": "2026-06-21T12:30:00.000Z"
+    }
+  }
+}
+```
+
+### Stale Write-Back Conflict Example
+
+```json
+{
+  "status": "conflict",
+  "operation": "applyConfirmedWorkingThreadUpdate",
+  "threadId": "thread-existing-agent-self-initiation",
+  "reason": "The thread changed after this proposal was created.",
+  "recommendedAction": "regenerateProposal",
+  "data": {
+    "status": "conflict",
+    "reason": "The thread changed after this proposal was created.",
+    "currentThreadSummary": {
+      "id": "thread-existing-agent-self-initiation",
+      "title": "Existing-Agent Self-Initiation Layer",
+      "status": "active",
+      "lastUpdated": "2026-06-21T13:00:00.000Z",
+      "currentJudgmentBrief": "The thread already moved forward.",
+      "nextLikelyMove": "Regenerate the proposal against the current state.",
+      "riskLevel": "medium",
+      "needsUserDecision": true
+    },
+    "staleProposal": {
+      "proposalId": "proposal-1",
+      "threadId": "thread-existing-agent-self-initiation",
+      "baseLastUpdated": "2026-06-21T12:00:00.000Z",
+      "changes": [],
+      "confirmationPrompt": "Write these Working Thread updates?",
+      "riskLevel": "medium"
+    },
+    "recommendedAction": "regenerateProposal"
+  }
+}
+```
+
 Do not make examples exhaustive. The contract should remain readable and focused on the behavior boundaries that matter for Along's self-initiation and companionship.
 
 ## Validation Strategy
