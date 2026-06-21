@@ -196,6 +196,15 @@ After repo-contained packaging passed, the main session approved continuing into
 - Do not use plain text as the primary output because later callers would need ad hoc parsing to update specific sections.
 - Do not generate a complete replacement `WorkingThread` because it risks overwriting existing judgment or boundaries and would weaken confirmed write-back discipline.
 
+2026-06-21 Core/MCP minimal contract update proposal decision:
+
+- `proposeWorkingThreadUpdate` should return a section patch proposal rather than plain text or a full `WorkingThread` replacement.
+- Proposal fields should include `threadId`, `baseLastUpdated` or `baseVersion`, `changes[]`, `confirmationPrompt`, and `riskLevel`.
+- Each change should include `section`, `currentValue`, `proposedValue`, and `rationale`.
+- The proposal should make it clear which Working Thread sections will change, what the current value is, what the proposed replacement is, and why the change is being suggested.
+- Do not use a plain-text proposal as the primary shape because future tools and adapters could not reliably inspect or validate it.
+- Do not use full replacement updates by default because they risk overwriting existing judgment, boundaries, or open questions.
+
 ## Plan Audit
 
 The current staged plan can deliver a narrow but real version of self-initiation and companionship:
