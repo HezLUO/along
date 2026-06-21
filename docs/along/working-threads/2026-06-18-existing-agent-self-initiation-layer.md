@@ -20,6 +20,7 @@ Long-term positioning is now approved: Along should become a local-first, open-s
 ## Boundary
 
 - Do not build a new standalone Along agent in V1.
+- Do not implement Core/MCP runtime, server, storage, watcher, adapter, delegation, or write delegation behavior beyond the approved type-only minimal contract.
 - Do not implement a real Core/MCP server in the minimal contract design pass.
 - Do not turn plugin packaging into a broad productization effort in V1.
 - The first packaging path is staged: personal local plugin first, then repo/team marketplace plugin after validation.
@@ -52,6 +53,8 @@ The Along Working Thread personal local plugin package was created at `/Users/ja
 The repo-contained Along Working Thread source package was added under `plugins/along-working-thread` while preserving `.agents/skills/along-working-thread` as the V1 source of truth. Verification covers targeted skill/package tests, plugin manifest validation, and exact source/package drift checking through `npm run verify:plugin-package`. This pass did not add automatic installation, public marketplace release, Core/MCP, runtime, presence, adapters, Memory v2, relationship modes, or delegation.
 
 After repo-contained packaging passed, the main session approved continuing into Along Core/MCP Minimal Contract design. This approval is for contract design only, not real MCP server implementation, runtime, background autonomy, presence, adapters, Memory v2, relationship modes, delegation, or write delegation.
+
+The Along Core/MCP Minimal Contract was implemented as a type-only contract in `src/core/working-thread-contract.ts`, with behavior-critical examples in the design spec and tests in `tests/core/working-thread-contract.test.ts`. Verification covers operation names, section-shaped Working Thread schemas, actionable summaries, drift classification, structured wrap-up drafts, section patch proposals, explicit confirmation envelopes, stale proposal conflicts, and shared operation result envelopes. This pass did not implement a real MCP server, storage, runtime, watcher, scheduler, notification, presence surface, LLM call, adapter, Memory v2, relationship mode, delegation, or write delegation.
 
 ## Validation Notes
 
@@ -267,6 +270,7 @@ After repo-contained packaging passed, the main session approved continuing into
 - The spec path is `docs/superpowers/specs/2026-06-21-along-core-mcp-minimal-contract-design.md`.
 - The spec is for user review before implementation planning.
 - No implementation plan, real MCP server, runtime, adapter, storage, or presence work has been approved yet.
+- After implementation, the expected verification gate is `npm test -- tests/core/working-thread-contract.test.ts`, `npm run typecheck`, `npm run build`, and full `npm test`.
 
 2026-06-21 Core/MCP minimal contract implementation plan status:
 
