@@ -42,7 +42,7 @@ Long-term positioning is now approved: Along should become a local-first, open-s
 
 ## Next Likely Move
 
-Design the Along Core/MCP Minimal Contract. Keep this limited to contract shape, schemas, operations, state boundaries, confirmation rules, and validation examples. Do not implement a real MCP server, runtime, background autonomy, presence surface, Hermes or Claude Code adapter, Memory v2, relationship modes, delegation, or write delegation in this pass.
+Review the `along-core-mcp-minimal-contract` branch for integration readiness, decide whether to merge or revise the type-only contract implementation, and then choose the next separately approved stage. Do not implement a real MCP server, runtime, storage layer, background autonomy, presence surface, Hermes or Claude Code adapter, Memory v2, relationship modes, delegation, or write delegation without a new approved pass.
 
 ## Last Wrap-Up
 
@@ -268,16 +268,16 @@ The Along Core/MCP Minimal Contract was implemented as a type-only contract in `
 
 - The main session approved writing the formal design spec.
 - The spec path is `docs/superpowers/specs/2026-06-21-along-core-mcp-minimal-contract-design.md`.
-- The spec is for user review before implementation planning.
-- No implementation plan, real MCP server, runtime, adapter, storage, or presence work has been approved yet.
-- After implementation, the expected verification gate is `npm test -- tests/core/working-thread-contract.test.ts`, `npm run typecheck`, `npm run build`, and full `npm test`.
+- The spec was approved and used to plan the type-only contract implementation.
+- No real MCP server, runtime, adapter, storage, or presence work has been approved yet.
+- After implementation, the expected verification gate is `npm test -- tests/core/working-thread-contract.test.ts`, `npm run typecheck`, `npm run build`, full `npm test`, and `rg -n "createServer|listen\\(|Mcp|MCPServer|\\.along|watch\\(|setInterval|setTimeout|fetch\\(|delegateToAgent|Hermes|Claude|Memory v2|relationship" src/core/working-thread-contract.ts tests/core/working-thread-contract.test.ts`.
 
 2026-06-21 Core/MCP minimal contract implementation plan status:
 
 - The user approved the formal design spec.
 - The implementation plan path is `docs/superpowers/plans/2026-06-21-along-core-mcp-minimal-contract.md`.
 - The plan is ready for user review and execution choice.
-- No implementation work has started yet.
+- The plan has now been executed on branch `along-core-mcp-minimal-contract` as a type-only implementation.
 
 ## Plan Audit
 
