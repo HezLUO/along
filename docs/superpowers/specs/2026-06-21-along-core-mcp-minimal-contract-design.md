@@ -544,7 +544,21 @@ Required examples:
       "id": "thread-existing-agent-self-initiation",
       "title": "Existing-Agent Self-Initiation Layer",
       "status": "active",
-      "lastUpdated": "2026-06-21T12:30:00.000Z"
+      "lastUpdated": "2026-06-21T12:30:00.000Z",
+      "whyThisMatters": "Along needs a minimal shared contract before a real MCP server or runtime layer exists.",
+      "currentJudgment": "The type-only Core/MCP minimal contract has been implemented and verified.",
+      "boundary": [
+        "Keep real MCP server, runtime, storage, adapters, and presence out of scope."
+      ],
+      "driftTriggers": [
+        "Building a real MCP server before the minimal contract is stable.",
+        "Adding storage, runtime, or adapter behavior to this pass."
+      ],
+      "nextLikelyMove": "Review the verified contract examples before deciding when to design the real MCP server layer.",
+      "lastWrapUp": "The minimal Core/MCP contract design was approved.",
+      "openQuestions": [
+        "When should Along design the real MCP server layer?"
+      ]
     }
   }
 }
