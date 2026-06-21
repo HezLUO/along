@@ -1,7 +1,7 @@
 # Existing-Agent Self-Initiation Layer
 
 Status: active
-Last updated: 2026-06-21
+Last updated: 2026-06-22
 
 ## Why This Matters
 
@@ -15,7 +15,7 @@ Personal local plugin packaging, installability, and subjective fresh-session be
 
 Repo-contained source packaging is also complete. The type-only Along Core/MCP Minimal Contract has been implemented and fast-forward merged into `main` at `f49a576e0613b3251294d004c1e7db00ad4b8439`. The contract now provides shared Working Thread types, operation signatures, behavior-critical examples, and tests, but it does not provide a real MCP server, runtime, storage, adapter, background autonomy, or presence.
 
-The next design direction is now approved: Core/MCP Minimal Server Design should target a real but extremely small MCP server shape, not another contract-only simulation. The intended server should expose the approved Working Thread behavior to existing agents while remaining docs-backed and non-autonomous. The Minimal Server V1 data source is also approved as docs-backed: it should read and write `docs/along/working-threads/*.md` rather than introducing `.along/` local state. The MCP exposure shape is approved as Resources + Tools: Working Thread summaries and full records should both be exposed as resources, while tools should be limited to judgment or state-change actions: drift classification, wrap-up drafting, update proposals, and confirmed write-back. Read/list behavior belongs to resources rather than server tools. Prompts are deferred to avoid overlapping with the existing skill/plugin behavior. Minimal Server V1 should not call an LLM or require an API key, but the design may leave a future extension point for an optional LLM provider. Confirmed write-back is approved for V1 only with a strict confirmation envelope, stale proposal conflict handling, file-scope limits to Working Thread records, and section-patch-only mutations. Malformed Working Thread records may be read partially with warnings, but must reject confirmed write-back until their required structure is repaired. Launch and transport are approved as a stdio MCP server, not an HTTP server or background daemon. The stdio server must receive an explicit workspace root and must not guess the target repo from process cwd. Code organization is approved as `src/mcp/` for MCP adapter, docs-backed store, Markdown parsing, and section patching, while `src/core/` remains the contract layer. Implementation should use a standard MCP SDK rather than a hand-rolled protocol layer, with any new dependency requiring explicit implementation-phase approval. Launch exposure is approved as a repo-level npm script rather than a package bin or formal CLI. This approval is for design direction only, not implementation.
+The Core/MCP Minimal Server Design is now approved, and the implementation plan has been written for review. The approved server shape is a real but extremely small docs-backed stdio MCP server, not another contract-only simulation and not a standalone Along agent. It should expose Working Thread summaries and full records as MCP resources, expose only action tools for drift classification, wrap-up drafting, update proposals, and confirmed write-back, and keep read/list behavior as resources rather than tools. Minimal Server V1 must not call an LLM, require an API key, expose MCP prompts, use `.along/` local state, open HTTP/SSE transport, run as a daemon, infer workspace from cwd, add a package bin, or rewrite full Markdown files. Confirmed write-back is allowed only with a strict confirmation envelope, stale proposal conflict handling, file-scope limits to Working Thread records, and section-patch-only mutation. Code organization is approved as `src/mcp/` while `src/core/` remains the contract layer. Implementation should use the standard MCP TypeScript SDK, with dependency installation still requiring explicit implementation-phase approval.
 
 Long-term positioning is now approved: Along should become a local-first, open-source, existing-agent companion layer. It should help the agents users already rely on gain continuity, turn-bound self-initiation, drift awareness, wrap-up discipline, and eventually deeper companionship. It should not present itself as another general coding agent.
 
@@ -24,7 +24,7 @@ Long-term positioning is now approved: Along should become a local-first, open-s
 - Do not build a new standalone Along agent in V1.
 - Do not implement Core/MCP runtime, server, storage, watcher, adapter, delegation, or write delegation behavior beyond the approved type-only minimal contract.
 - Do not implement a real Core/MCP server in the minimal contract design pass.
-- Do not implement a real Core/MCP server until a dedicated Minimal Server Design spec and implementation plan are approved.
+- Do not implement a real Core/MCP server until the dedicated Minimal Server implementation plan is reviewed and approved.
 - The Minimal Server direction must stay docs-backed and non-autonomous unless the user explicitly approves a later storage/runtime change.
 - Do not introduce `.along/` local store for the Minimal Server V1 data source.
 - Do not expose MCP prompts in Minimal Server V1; keep prompts deferred until the skill/plugin boundary is clearer.
@@ -62,7 +62,7 @@ Long-term positioning is now approved: Along should become a local-first, open-s
 
 ## Next Likely Move
 
-The Core/MCP Minimal Server Design spec has been written for user review. The approved shape is a real but minimal, docs-backed stdio MCP server that exposes the already-approved Working Thread contract to existing agents through Resources + Tools, without adding runtime autonomy, background scheduling, presence, adapters, Memory v2, relationship modes, delegation, write delegation, MCP prompts, required LLM calls, HTTP/SSE transport, local ports, daemon behavior, package bin, or formal CLI distribution. The resource boundary is summary + full record. The tool boundary is action-only: `classifyDrift`, `draftWrapUp`, `proposeWorkingThreadUpdate`, and `applyConfirmedWorkingThreadUpdate`. Confirmed write-back is allowed only with explicit confirmation evidence, stale proposal conflict rejection, write scope limited to Working Thread records, and section-patch-only mutation. Malformed records should be readable as partial resources with warnings, but not writable. The server must be launched with an explicit workspace root. Code organization is `src/mcp/`, while `src/core/` remains contract-only. Implementation should use a standard MCP SDK, with dependency approval still required during implementation. The next step is user review of `docs/superpowers/specs/2026-06-21-along-core-mcp-minimal-server-design.md`.
+The Core/MCP Minimal Server Design spec is approved, and the implementation plan has been written at `docs/superpowers/plans/2026-06-22-along-core-mcp-minimal-server.md`. The next step is user review of that plan. Do not start implementation, dependency installation, worktree creation, or focused execution until the implementation plan is approved.
 
 ## Last Wrap-Up
 
@@ -100,7 +100,7 @@ The main session approved using a standard MCP SDK for Minimal Server V1 impleme
 
 The main session approved a repo-level npm script as the Minimal Server V1 launch entry. The intended shape is something like `npm run mcp:working-thread -- --workspace /path/to/repo`. Do not add a package bin, formal CLI, or public distribution command in V1.
 
-The Core/MCP Minimal Server Design spec was written at `docs/superpowers/specs/2026-06-21-along-core-mcp-minimal-server-design.md` and is awaiting user review. No implementation plan or code changes are approved yet.
+The Core/MCP Minimal Server Design spec at `docs/superpowers/specs/2026-06-21-along-core-mcp-minimal-server-design.md` was approved by the user on 2026-06-22. The implementation plan was written at `docs/superpowers/plans/2026-06-22-along-core-mcp-minimal-server.md` and is awaiting user review. No implementation, dependency installation, worktree creation, focused execution, push, merge, or history rewrite is approved yet.
 
 ## Validation Notes
 
