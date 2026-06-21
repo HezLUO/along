@@ -117,6 +117,14 @@ After reviewing the fresh-session validation, the main session approved continui
 - Require validation to fail on meaningful drift between the source skill and packaged skill.
 - Defer any source-of-truth migration until the repo/team packaging shape has proven stable.
 
+2026-06-21 repo package validation decision:
+
+- Add a repo-level verification path for the package, such as `npm run verify:plugin-package`.
+- The verification path may run the existing skill tests, plugin manifest validator, and source/package drift check.
+- Do not add an automatic install or sync script in this pass.
+- Keep fresh-session behavior validation as a manual checklist because it evaluates LLM behavior and product feel, not deterministic package shape.
+- Treat validation failure as a packaging blocker.
+
 ## Plan Audit
 
 The current staged plan can deliver a narrow but real version of self-initiation and companionship:
