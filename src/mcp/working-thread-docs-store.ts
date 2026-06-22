@@ -1,4 +1,4 @@
-import { readdir, readFile, writeFile } from "node:fs/promises";
+import { lstat, readdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import type {
   WorkingThreadSummary,
@@ -39,6 +39,11 @@ export function createWorkingThreadDocsStore(
     recordsDir,
 
     async listSummaries() {
+      const recordsDirExists = await ensureRecordsDirSafe(recordsDir, { allowMissing: true });
+      if (!recordsDirExists) {
+        return [];
+      }
+
       const entries = await readdir(recordsDir, { withFileTypes: true }).catch((error: unknown) => {
         if (isNodeError(error) && error.code === "ENOENT") {
           return [];
@@ -81,13 +86,19 @@ export function createWorkingThreadDocsStore(
         proposal.changes,
       );
       const recordPath = resolveRecordPath(recordsDir, proposal.threadId);
-      await writeFile(recordPath, patchedMarkdown, "utf8");
-
-      return parseWorkingThreadMarkdown({
+      const patched = parseWorkingThreadMarkdown({
         id: proposal.threadId,
         sourcePath: recordPath,
         markdown: patchedMarkdown,
       });
+
+      if (patched.malformed || !patched.thread) {
+        throw new Error(`Cannot apply Working Thread proposal because patched record is malformed: ${proposal.threadId}.`);
+      }
+
+      await writeRecordFile(recordsDir, proposal.threadId, patchedMarkdown);
+
+      return patched;
     },
   };
 }
@@ -114,7 +125,7 @@ async function readParsedThread(
   threadId: string,
 ): Promise<ParsedWorkingThreadDocument> {
   const recordPath = resolveRecordPath(recordsDir, threadId);
-  const markdown = await readFile(recordPath, "utf8");
+  const markdown = await readRecordFile(recordsDir, threadId);
 
   return parseWorkingThreadMarkdown({
     id: threadId,
@@ -137,4 +148,70 @@ function resolveRecordPath(recordsDir: string, threadId: string): string {
   }
 
   return recordPath;
+}
+
+async function readRecordFile(recordsDir: string, threadId: string): Promise<string> {
+  const recordPath = await ensureRecordFileSafe(recordsDir, threadId);
+  return readFile(recordPath, "utf8");
+}
+
+async function writeRecordFile(
+  recordsDir: string,
+  threadId: string,
+  markdown: string,
+): Promise<void> {
+  const recordPath = await ensureRecordFileSafe(recordsDir, threadId);
+  await writeFile(recordPath, markdown, "utf8");
+}
+
+async function ensureRecordFileSafe(
+  recordsDir: string,
+  threadId: string,
+): Promise<string> {
+  await ensureRecordsDirSafe(recordsDir, { allowMissing: false });
+  const recordPath = resolveRecordPath(recordsDir, threadId);
+  const stats = await lstat(recordPath);
+
+  if (stats.isSymbolicLink()) {
+    throw new Error(`Refusing to access symbolic link Working Thread record: ${threadId}.`);
+  }
+
+  if (!stats.isFile()) {
+    throw new Error(`Working Thread record is not a regular file: ${threadId}.`);
+  }
+
+  return recordPath;
+}
+
+async function ensureRecordsDirSafe(
+  recordsDir: string,
+  options: { allowMissing: boolean },
+): Promise<boolean> {
+  const pathsToCheck = [
+    path.dirname(path.dirname(recordsDir)),
+    path.dirname(recordsDir),
+    recordsDir,
+  ];
+
+  for (const currentPath of pathsToCheck) {
+    try {
+      const stats = await lstat(currentPath);
+      if (stats.isSymbolicLink()) {
+        throw new Error(`Refusing to access symbolic link in Working Thread records path: ${currentPath}.`);
+      }
+    } catch (error) {
+      if (options.allowMissing && isNodeError(error) && error.code === "ENOENT") {
+        return false;
+      }
+
+      throw error;
+    }
+  }
+
+  const recordsDirStats = await lstat(recordsDir);
+  if (!recordsDirStats.isDirectory()) {
+    throw new Error(`Working Thread records path is not a directory: ${recordsDir}.`);
+  }
+
+  return true;
 }

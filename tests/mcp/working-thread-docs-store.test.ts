@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it } from "vitest";
-import { mkdtemp, mkdir, readFile, rm, writeFile } from "node:fs/promises";
+import { mkdtemp, mkdir, readFile, rm, symlink, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { createWorkingThreadDocsStore } from "../../src/mcp/working-thread-docs-store";
@@ -117,6 +117,53 @@ describe("Working Thread docs store", () => {
 
     expect(result.thread?.currentJudgment).toBe("The store patch was applied.");
     expect(updatedFile).toContain("The store patch was applied.");
+  });
+
+  it("rejects symlinked record files and leaves outside targets unchanged", async () => {
+    const { recordsDir, store, workspaceRoot } = await createTempStore();
+    const outsideFile = path.join(workspaceRoot, "outside-thread.md");
+    await writeFile(outsideFile, validRecord);
+    await symlink(outsideFile, path.join(recordsDir, "escape-thread.md"));
+
+    await expect(store.readThread("escape-thread")).rejects.toThrow(/symlink|symbolic/i);
+    await expect(store.applySectionPatchProposal({
+      proposalId: "proposal-symlink",
+      threadId: "escape-thread",
+      baseLastUpdated: "2026-06-22",
+      changes: [{
+        section: "currentJudgment",
+        currentValue: "The store test is running.",
+        proposedValue: "This write escaped the records directory.",
+        rationale: "Symlinked records must be rejected.",
+      }],
+      confirmationPrompt: "Apply this Working Thread update?",
+      riskLevel: "high",
+    })).rejects.toThrow(/symlink|symbolic/i);
+    await expect(readFile(outsideFile, "utf8")).resolves.toBe(validRecord);
+  });
+
+  it("rejects malformed patched results before writing", async () => {
+    const { recordsDir, store } = await createTempStore();
+    const recordPath = path.join(recordsDir, "store-test-thread.md");
+
+    await expect(store.applySectionPatchProposal({
+      proposalId: "proposal-malformed-patch",
+      threadId: "store-test-thread",
+      baseLastUpdated: "2026-06-22",
+      changes: [{
+        section: "currentJudgment",
+        currentValue: "The store test is running.",
+        proposedValue: `The injected heading would duplicate a required section.
+
+## Current Judgment
+
+This duplicate heading makes the patched record malformed.`,
+        rationale: "Malformed patched records must not be persisted.",
+      }],
+      confirmationPrompt: "Apply this Working Thread update?",
+      riskLevel: "high",
+    })).rejects.toThrow(/malformed/i);
+    await expect(readFile(recordPath, "utf8")).resolves.toBe(validRecord);
   });
 
   it("rejects stale proposals", async () => {
