@@ -216,6 +216,12 @@ function applySingleSectionPatch(
   }
 
   const replacementBody = formatSectionValue(change.proposedValue).trim();
+  if (containsMarkdownHeading(replacementBody)) {
+    throw new Error(
+      `Cannot patch ${change.section}: proposed value must not introduce Markdown headings.`,
+    );
+  }
+
   const suffix = targetRange.bodyEnd < markdown.length ? "\n\n" : "\n";
   return [
     markdown.slice(0, targetRange.bodyStart),
@@ -328,6 +334,10 @@ function formatSectionValue(value: string | string[]): string {
   }
 
   return value;
+}
+
+function containsMarkdownHeading(value: string): boolean {
+  return /^#{1,6}\s+\S/m.test(value);
 }
 
 function parseBulletList(value: string): string[] {

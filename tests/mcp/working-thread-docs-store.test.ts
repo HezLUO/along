@@ -184,7 +184,7 @@ describe("Working Thread docs store", () => {
     await expect(readFile(outsideFile, "utf8")).resolves.toBe(validRecord);
   });
 
-  it("rejects malformed patched results before writing", async () => {
+  it("rejects heading-injected patched results before writing", async () => {
     const { recordsDir, store } = await createTempStore();
     const recordPath = path.join(recordsDir, "store-test-thread.md");
 
@@ -205,7 +205,7 @@ This duplicate heading makes the patched record malformed.`,
       }],
       confirmationPrompt: "Apply this Working Thread update?",
       riskLevel: "high",
-    })).rejects.toThrow(/malformed/i);
+    })).rejects.toThrow(/heading/i);
     await expect(readFile(recordPath, "utf8")).resolves.toBe(validRecord);
   });
 

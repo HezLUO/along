@@ -1,5 +1,8 @@
 import { createHash } from "node:crypto";
-import { workingThreadSections } from "../core/working-thread-contract";
+import {
+  workingThreadSections,
+  workingThreadStatuses,
+} from "../core/working-thread-contract";
 import type {
   ApplyConfirmedWorkingThreadUpdateInput,
   ApplyConfirmedWorkingThreadUpdateResult,
@@ -136,12 +139,24 @@ function draftWrapUp(input: DraftWrapUpInput): DraftWrapUpResult {
 function proposeWorkingThreadUpdate(
   input: ProposeWorkingThreadUpdateInput,
 ): ProposeWorkingThreadUpdateResult {
-  const changes = buildSectionChanges(input.thread, input.draft);
-  const baseVersion = buildWorkingThreadBaseVersion(input.thread);
+  const invalidReason = getInvalidProposeInputReason(input);
+  const threadId = getProposeInputThreadId(input);
+  if (invalidReason) {
+    return {
+      status: "rejected",
+      operation: "proposeWorkingThreadUpdate",
+      threadId,
+      reason: invalidReason,
+    };
+  }
+
+  const typedInput = input as ProposeWorkingThreadUpdateInput;
+  const changes = buildSectionChanges(typedInput.thread, typedInput.draft);
+  const baseVersion = buildWorkingThreadBaseVersion(typedInput.thread);
   const proposal: WorkingThreadUpdateProposal = {
-    proposalId: buildProposalId(input.thread, baseVersion, changes),
-    threadId: input.thread.id,
-    baseLastUpdated: input.thread.lastUpdated,
+    proposalId: buildProposalId(typedInput.thread, baseVersion, changes),
+    threadId: typedInput.thread.id,
+    baseLastUpdated: typedInput.thread.lastUpdated,
     baseVersion,
     changes,
     confirmationPrompt: "Confirm this Working Thread update before any write-back is applied.",
@@ -151,7 +166,7 @@ function proposeWorkingThreadUpdate(
   return {
     status: "needsConfirmation",
     operation: "proposeWorkingThreadUpdate",
-    threadId: input.thread.id,
+    threadId: typedInput.thread.id,
     data: proposal,
     message: "Working Thread update proposal requires explicit confirmation.",
   };
@@ -326,6 +341,88 @@ function getInvalidConfirmationReason(
   }
   if (!typedConfirmation.approvedIntent.trim()) {
     return "Confirmation approvedIntent is required.";
+  }
+
+  return undefined;
+}
+
+function getInvalidProposeInputReason(
+  input: ProposeWorkingThreadUpdateInput,
+): string | undefined {
+  const value = input as unknown;
+  if (!isRecord(value)) {
+    return "Propose input is required.";
+  }
+
+  const invalidThreadReason = getInvalidWorkingThreadReason(value.thread);
+  if (invalidThreadReason) {
+    return invalidThreadReason;
+  }
+
+  const invalidDraftReason = getInvalidWrapUpDraftReason(value.draft);
+  if (invalidDraftReason) {
+    return invalidDraftReason;
+  }
+
+  return undefined;
+}
+
+function getInvalidWorkingThreadReason(thread: unknown): string | undefined {
+  if (!isRecord(thread)) {
+    return "Thread is required.";
+  }
+
+  const requiredStringFields = [
+    "id",
+    "title",
+    "lastUpdated",
+    "whyThisMatters",
+    "currentJudgment",
+    "nextLikelyMove",
+    "lastWrapUp",
+  ] as const;
+  for (const field of requiredStringFields) {
+    if (typeof thread[field] !== "string") {
+      return `Thread ${field} is required.`;
+    }
+  }
+
+  if (
+    typeof thread.status !== "string"
+    || !workingThreadStatuses.includes(thread.status as WorkingThread["status"])
+  ) {
+    return "Thread status is invalid.";
+  }
+
+  for (const field of ["boundary", "driftTriggers", "openQuestions"] as const) {
+    if (!isStringArray(thread[field])) {
+      return `Thread ${field} must be a string array.`;
+    }
+  }
+
+  return undefined;
+}
+
+function getInvalidWrapUpDraftReason(draft: unknown): string | undefined {
+  if (!isRecord(draft)) {
+    return "Draft is required.";
+  }
+
+  const requiredStringFields = [
+    "summary",
+    "judgmentChange",
+    "boundaryChange",
+    "nextLikelyMove",
+    "openQuestionsChange",
+  ] as const;
+  for (const field of requiredStringFields) {
+    if (typeof draft[field] !== "string") {
+      return `Draft ${field} is required.`;
+    }
+  }
+
+  if (draft.requiresConfirmation !== true) {
+    return "Draft requiresConfirmation must be true.";
   }
 
   return undefined;
@@ -510,6 +607,17 @@ function getApplyInputThreadId(
   return undefined;
 }
 
+function getProposeInputThreadId(
+  input: ProposeWorkingThreadUpdateInput,
+): string | undefined {
+  const value = input as unknown;
+  if (isRecord(value) && isRecord(value.thread) && typeof value.thread.id === "string") {
+    return value.thread.id;
+  }
+
+  return undefined;
+}
+
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
 }
@@ -521,6 +629,10 @@ function isNonEmptyString(value: unknown): value is string {
 function isSectionValue(value: unknown): value is string | string[] {
   return typeof value === "string"
     || (Array.isArray(value) && value.every((item) => typeof item === "string"));
+}
+
+function isStringArray(value: unknown): value is string[] {
+  return Array.isArray(value) && value.every((item) => typeof item === "string");
 }
 
 function isStaleError(error: unknown): boolean {

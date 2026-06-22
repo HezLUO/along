@@ -188,6 +188,22 @@ describe("Working Thread operation handlers", () => {
     expect(firstProposal.data?.proposalId).not.toBe(secondProposal.data?.proposalId);
   });
 
+  it("rejects malformed propose inputs without throwing", async () => {
+    const { operations } = await createTempOperations();
+
+    const result = await operations.proposeWorkingThreadUpdate({
+      thread: { id: threadId },
+      draft: {},
+    } as never);
+
+    expect(result).toMatchObject({
+      status: "rejected",
+      operation: "proposeWorkingThreadUpdate",
+      threadId,
+      reason: expect.stringMatching(/thread|draft/i),
+    });
+  });
+
   it("rejects write-back without explicit usable confirmation", async () => {
     const { operations, proposal } = await createTempProposal();
 

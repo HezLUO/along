@@ -110,6 +110,25 @@ describe("Working Thread MCP server surface", () => {
     });
   });
 
+  it("returns structured rejection for malformed propose tool input", async () => {
+    const registrar = createFakeRegistrar();
+    registerWorkingThreadMcpSurface(registrar, createFakeStore());
+
+    const result = await registrar.tools.proposeWorkingThreadUpdate.handler({
+      thread: { id: "thread-1" },
+      draft: {},
+    });
+
+    expect(result.isError).toBe(true);
+    expect(JSON.parse(result.content[0].text)).toEqual(result.structuredContent);
+    expect(result.structuredContent).toMatchObject({
+      status: "rejected",
+      operation: "proposeWorkingThreadUpdate",
+      threadId: "thread-1",
+      reason: expect.stringMatching(/thread|draft/i),
+    });
+  });
+
   it.each(["rejected", "conflict", "error"] as const)(
     "marks %s tool results as isError",
     async (status) => {
@@ -184,23 +203,7 @@ const parsedThread: ParsedWorkingThreadDocument = {
 
 function createRegisteredSurface() {
   const registrar = createFakeRegistrar();
-  const store = {
-    workspaceRoot: "/tmp/workspace",
-    recordsDir: "/tmp/workspace/docs/along/working-threads",
-    listSummariesCalls: 0,
-    readThreadCalls: [] as string[],
-    async listSummaries() {
-      this.listSummariesCalls += 1;
-      return [summary];
-    },
-    async readThread(threadId: string) {
-      this.readThreadCalls.push(threadId);
-      return parsedThread;
-    },
-    async applySectionPatchProposal() {
-      return parsedThread;
-    },
-  };
+  const store = createFakeStore();
   const operations = {
     classifyDriftInputs: [] as unknown[],
     applyConfirmedWorkingThreadUpdateResult: {
@@ -241,6 +244,26 @@ function createRegisteredSurface() {
   registerWorkingThreadMcpSurface(registrar, store, operations);
 
   return { operations, registrar, store };
+}
+
+function createFakeStore() {
+  return {
+    workspaceRoot: "/tmp/workspace",
+    recordsDir: "/tmp/workspace/docs/along/working-threads",
+    listSummariesCalls: 0,
+    readThreadCalls: [] as string[],
+    async listSummaries() {
+      this.listSummariesCalls += 1;
+      return [summary];
+    },
+    async readThread(threadId: string) {
+      this.readThreadCalls.push(threadId);
+      return parsedThread;
+    },
+    async applySectionPatchProposal() {
+      return parsedThread;
+    },
+  };
 }
 
 function createFakeRegistrar() {

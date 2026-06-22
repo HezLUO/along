@@ -213,6 +213,21 @@ The user approved the Minimal MCP Server spec.`);
     ])).toThrow(/current value/i);
   });
 
+  it("rejects section patches that would introduce Markdown headings", () => {
+    expect(() => applyWorkingThreadSectionPatches(validRecord, [
+      {
+        section: "currentJudgment",
+        currentValue: "The Minimal MCP Server spec is approved and awaiting implementation.",
+        proposedValue: `A proposed judgment.
+
+## Arbitrary Heading
+
+This heading must not be introduced through a section patch.`,
+        rationale: "Heading injection should fail.",
+      },
+    ])).toThrow(/heading/i);
+  });
+
   it("rejects patches for missing sections", () => {
     const withoutOpenQuestions = validRecord.replace(/\n## Open Questions[\s\S]*$/, "");
 
