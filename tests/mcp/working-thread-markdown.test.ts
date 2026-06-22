@@ -134,6 +134,23 @@ This heading should make the record malformed.
 
 This nested heading should make the record malformed.`,
     );
+    const withNestedH1 = validRecord.replace(
+      "The Minimal MCP Server spec is approved and awaiting implementation.",
+      `The Minimal MCP Server spec is approved and awaiting implementation.
+
+# Nested H1
+
+This nested H1 should make the record malformed.`,
+    );
+    const withSetextHeading = validRecord.replace(
+      "The Minimal MCP Server spec is approved and awaiting implementation.",
+      `The Minimal MCP Server spec is approved and awaiting implementation.
+
+Setext Heading
+---
+
+This Setext heading should make the record malformed.`,
+    );
 
     const unknownParsed = parseWorkingThreadMarkdown({
       id: "unknown-heading-thread",
@@ -145,6 +162,16 @@ This nested heading should make the record malformed.`,
       sourcePath: "docs/along/working-threads/nested-heading-thread.md",
       markdown: withNestedHeading,
     });
+    const h1Parsed = parseWorkingThreadMarkdown({
+      id: "nested-h1-thread",
+      sourcePath: "docs/along/working-threads/nested-h1-thread.md",
+      markdown: withNestedH1,
+    });
+    const setextParsed = parseWorkingThreadMarkdown({
+      id: "setext-heading-thread",
+      sourcePath: "docs/along/working-threads/setext-heading-thread.md",
+      markdown: withSetextHeading,
+    });
 
     expect(unknownParsed.malformed).toBe(true);
     expect(unknownParsed.thread).toBeUndefined();
@@ -152,6 +179,12 @@ This nested heading should make the record malformed.`,
     expect(nestedParsed.malformed).toBe(true);
     expect(nestedParsed.thread).toBeUndefined();
     expect(nestedParsed.warnings.map((warning) => warning.code)).toContain("unknown-section");
+    expect(h1Parsed.malformed).toBe(true);
+    expect(h1Parsed.thread).toBeUndefined();
+    expect(h1Parsed.warnings.map((warning) => warning.code)).toContain("unknown-section");
+    expect(setextParsed.malformed).toBe(true);
+    expect(setextParsed.thread).toBeUndefined();
+    expect(setextParsed.warnings.map((warning) => warning.code)).toContain("unknown-section");
   });
 
   it("preserves invalid raw status in malformed partial records", () => {

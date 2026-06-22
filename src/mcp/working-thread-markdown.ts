@@ -78,6 +78,7 @@ export function parseWorkingThreadMarkdown(
   const status = input.markdown.match(/^Status:\s*(.+?)\s*$/m)?.[1]?.trim();
   const lastUpdated = input.markdown.match(/^Last updated:\s*(.+?)\s*$/m)?.[1]?.trim();
   const sections = parseSections(input.markdown, warnings);
+  addSetextHeadingWarnings(input.markdown, warnings);
 
   if (title) {
     partial.title = title;
@@ -258,13 +259,17 @@ function parseSections(
   warnings: WorkingThreadParseWarning[],
 ): Map<WorkingThreadSection, string[]> {
   const sections = new Map<WorkingThreadSection, string[]>();
-  const headingRegex = /^ {0,3}(#{2,6})\s+(.+?)\s*$/gm;
+  const headingRegex = /^ {0,3}(#{1,6})\s+(.+?)\s*$/gm;
   const headings = [...markdown.matchAll(headingRegex)];
 
   for (let index = 0; index < headings.length; index += 1) {
     const heading = headings[index];
     const marker = heading[1] ?? "";
     const headingText = heading[2] ?? "";
+    if (marker === "#" && heading.index !== undefined && isDocumentTitleHeading(markdown, heading.index)) {
+      continue;
+    }
+
     const section = marker === "##"
       ? headingSections.get(normalizeHeading(headingText))
       : undefined;
@@ -321,7 +326,7 @@ function findSectionRange(
   markdown: string,
   section: WorkingThreadSection,
 ): { bodyStart: number; bodyEnd: number }[] {
-  const headingRegex = /^ {0,3}(#{2,6})\s+(.+?)\s*$/gm;
+  const headingRegex = /^ {0,3}(#{1,6})\s+(.+?)\s*$/gm;
   const headings = [...markdown.matchAll(headingRegex)];
   const ranges: { bodyStart: number; bodyEnd: number }[] = [];
 
@@ -385,6 +390,27 @@ function containsMarkdownHeading(value: string): boolean {
 
     return /^\s*(?:=+|-+)\s*$/.test(line) && Boolean(lines[index - 1]?.trim());
   });
+}
+
+function addSetextHeadingWarnings(
+  markdown: string,
+  warnings: WorkingThreadParseWarning[],
+): void {
+  const lines = markdown.split(/\r?\n/);
+  for (let index = 1; index < lines.length; index += 1) {
+    const line = lines[index] ?? "";
+    const previousLine = lines[index - 1] ?? "";
+    if (/^ {0,3}(?:=+|-+)\s*$/.test(line) && previousLine.trim()) {
+      warnings.push({
+        code: "unknown-section",
+        message: `Unknown Working Thread section heading: ${previousLine.trim()}.`,
+      });
+    }
+  }
+}
+
+function isDocumentTitleHeading(markdown: string, headingIndex: number): boolean {
+  return markdown.slice(0, headingIndex).trim().length === 0;
 }
 
 function parseBulletList(value: string): string[] {
