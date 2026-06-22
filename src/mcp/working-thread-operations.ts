@@ -81,12 +81,13 @@ function classifyDrift(input: ClassifyDriftInput): ClassifyDriftResult {
     };
   }
 
-  const drift = buildDriftClassification(input);
+  const typedInput = input as ClassifyDriftInput;
+  const drift = buildDriftClassification(typedInput);
 
   return {
     status: "ok",
     operation: "classifyDrift",
-    threadId: input.thread.id,
+    threadId: typedInput.thread.id,
     data: drift,
   };
 }
@@ -226,13 +227,14 @@ async function applyConfirmedWorkingThreadUpdate(
     };
   }
 
+  const typedInput = input as ApplyConfirmedWorkingThreadUpdateInput;
   try {
-    const parsed = await store.applySectionPatchProposal(input.proposal);
+    const parsed = await store.applySectionPatchProposal(typedInput.proposal);
     if (!parsed.thread) {
       return {
         status: "rejected",
         operation: "applyConfirmedWorkingThreadUpdate",
-        threadId: input.proposal.threadId,
+        threadId: typedInput.proposal.threadId,
         reason: "Store returned a malformed Working Thread after applying the proposal.",
       };
     }
@@ -240,26 +242,26 @@ async function applyConfirmedWorkingThreadUpdate(
     return {
       status: "ok",
       operation: "applyConfirmedWorkingThreadUpdate",
-      threadId: input.proposal.threadId,
+      threadId: typedInput.proposal.threadId,
       data: {
-        appliedProposalId: input.proposal.proposalId,
+        appliedProposalId: typedInput.proposal.proposalId,
         thread: parsed.thread,
       },
     };
   } catch (error) {
     if (isStaleError(error)) {
-      const currentThreadSummary = await readCurrentThreadSummary(store, input.proposal);
+      const currentThreadSummary = await readCurrentThreadSummary(store, typedInput.proposal);
       return {
         status: "conflict",
         operation: "applyConfirmedWorkingThreadUpdate",
-        threadId: input.proposal.threadId,
+        threadId: typedInput.proposal.threadId,
         reason: getErrorMessage(error),
         recommendedAction: "regenerateProposal",
         data: {
           status: "conflict",
           reason: getErrorMessage(error),
           currentThreadSummary,
-          staleProposal: input.proposal,
+          staleProposal: typedInput.proposal,
           recommendedAction: "regenerateProposal",
         },
       };
@@ -337,8 +339,13 @@ function buildSectionChanges(
 function getInvalidConfirmationReason(
   input: ApplyConfirmedWorkingThreadUpdateInput,
 ): string | undefined {
-  const proposal = input.proposal as unknown;
-  const confirmation = input.confirmation as unknown;
+  const value = input as unknown;
+  if (!isRecord(value)) {
+    return "Apply input is required.";
+  }
+
+  const proposal = value.proposal;
+  const confirmation = value.confirmation;
   const invalidProposalReason = getInvalidProposalReason(proposal);
   if (invalidProposalReason) {
     return invalidProposalReason;
@@ -647,7 +654,8 @@ function containsSignal(text: string, signal: string): boolean {
 function getApplyInputThreadId(
   input: ApplyConfirmedWorkingThreadUpdateInput,
 ): string | undefined {
-  const proposal = input.proposal as unknown;
+  const value = input as unknown;
+  const proposal = isRecord(value) ? value.proposal : undefined;
   if (isRecord(proposal) && typeof proposal.threadId === "string") {
     return proposal.threadId;
   }

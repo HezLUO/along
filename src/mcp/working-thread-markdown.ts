@@ -361,10 +361,10 @@ function containsMarkdownHeading(value: string): boolean {
   const lines = value.split(/\r?\n/);
 
   return lines.some((line, index) => {
-    if (/^#{1,6}\s+\S/.test(line)) {
+    if (/^ {0,3}#{1,6}\s+\S/.test(line)) {
       return true;
     }
-    if (/^\s*[-*]\s+#{1,6}\s+\S/.test(line)) {
+    if (/^ {0,3}[-*]\s+#{1,6}\s+\S/.test(line)) {
       return true;
     }
 

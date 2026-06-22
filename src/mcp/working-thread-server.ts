@@ -36,9 +36,9 @@ export const WORKING_THREAD_PROMPT_NAMES = [] as const;
 const jsonMimeType = "application/json";
 const unknownRecord = z.record(z.string(), z.unknown());
 const classifyDriftInputSchema = {
-  thread: unknownRecord,
-  userRequest: z.string().min(1),
-  proposedDirection: z.string().optional(),
+  thread: z.unknown().optional(),
+  userRequest: z.unknown().optional(),
+  proposedDirection: z.unknown().optional(),
 };
 const draftWrapUpInputSchema = {
   thread: unknownRecord,

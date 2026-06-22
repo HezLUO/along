@@ -247,6 +247,20 @@ This heading must not be introduced through a section patch.`,
     ])).toThrow(/heading/i);
   });
 
+  it("rejects section patches that would introduce indented ATX Markdown headings", () => {
+    expect(() => applyWorkingThreadSectionPatches(validRecord, [
+      {
+        section: "currentJudgment",
+        currentValue: "The Minimal MCP Server spec is approved and awaiting implementation.",
+        proposedValue: `A proposed judgment.
+   ## Indented Heading
+
+This heading must not be introduced through a section patch.`,
+        rationale: "Indented ATX heading injection should fail.",
+      },
+    ])).toThrow(/heading/i);
+  });
+
   it("rejects section patches that would introduce Setext Markdown headings", () => {
     expect(() => applyWorkingThreadSectionPatches(validRecord, [
       {
@@ -275,6 +289,21 @@ This Setext heading must not be introduced through a section patch.`,
           "## List Heading",
         ],
         rationale: "List heading injection should fail.",
+      },
+    ])).toThrow(/heading/i);
+  });
+
+  it("rejects list-valued section patches with nested multiline headings", () => {
+    expect(() => applyWorkingThreadSectionPatches(validRecord, [
+      {
+        section: "openQuestions",
+        currentValue: ["Which agent client should validate the server first?"],
+        proposedValue: [
+          "Which agent client should validate the server first?",
+          `Follow-up question
+  ## Nested Heading`,
+        ],
+        rationale: "Nested list heading injection should fail.",
       },
     ])).toThrow(/heading/i);
   });

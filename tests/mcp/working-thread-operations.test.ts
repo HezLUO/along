@@ -241,6 +241,18 @@ describe("Working Thread operation handlers", () => {
     });
   });
 
+  it("rejects root-level malformed apply inputs without throwing", async () => {
+    const { operations } = await createTempOperations();
+
+    const result = await operations.applyConfirmedWorkingThreadUpdate(undefined as never);
+
+    expect(result).toMatchObject({
+      status: "rejected",
+      operation: "applyConfirmedWorkingThreadUpdate",
+      reason: expect.stringMatching(/apply input/i),
+    });
+  });
+
   it("rejects write-back when approvedAt is blank", async () => {
     const { operations, proposal } = await createTempProposal();
 

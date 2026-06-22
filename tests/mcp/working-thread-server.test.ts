@@ -136,7 +136,10 @@ describe("Working Thread MCP server surface", () => {
   it("returns structured rejection for malformed classify tool input", async () => {
     const registrar = createFakeRegistrar();
     registerWorkingThreadMcpSurface(registrar, createFakeStore());
+    const schema = getToolSchema(registrar, "classifyDrift");
 
+    expect(schema.safeParse({}).success).toBe(true);
+    expect(schema.safeParse({ thread: { id: "thread-1" } }).success).toBe(true);
     const result = await registrar.tools.classifyDrift.handler({
       thread: {
         id: "thread-1",
