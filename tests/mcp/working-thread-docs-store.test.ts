@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it } from "vitest";
-import { link, mkdtemp, mkdir, readFile, realpath, rm, symlink, writeFile } from "node:fs/promises";
+import { link, mkdtemp, mkdir, readFile, realpath, rename, rm, symlink, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { createWorkingThreadDocsStore } from "../../src/mcp/working-thread-docs-store";
@@ -85,6 +85,36 @@ describe("Working Thread docs store", () => {
     expect(() => createWorkingThreadDocsStore({
       workspaceRoot: symlinkWorkspaceRoot,
     })).toThrow(/symlink|symbolic/i);
+  });
+
+  it("rejects workspace roots swapped to symlinks after store creation", async () => {
+    const { store, workspaceRoot } = await createTempStore();
+    const movedWorkspaceRoot = `${workspaceRoot}-moved`;
+    const outsideWorkspaceRoot = await mkdtemp(path.join(os.tmpdir(), "working-thread-outside-root-"));
+    const outsideRecordsDir = path.join(outsideWorkspaceRoot, "docs/along/working-threads");
+    const outsideRecordPath = path.join(outsideRecordsDir, "store-test-thread.md");
+    tempRoots.push(movedWorkspaceRoot, outsideWorkspaceRoot);
+    await mkdir(outsideRecordsDir, { recursive: true });
+    await writeFile(outsideRecordPath, validRecord);
+    await rename(workspaceRoot, movedWorkspaceRoot);
+    await symlink(outsideWorkspaceRoot, workspaceRoot);
+
+    await expect(store.readThread("store-test-thread")).rejects.toThrow(/symlink|symbolic/i);
+    await expect(store.applySectionPatchProposal({
+      proposalId: "proposal-root-symlink-swap",
+      threadId: "store-test-thread",
+      baseLastUpdated: "2026-06-22",
+      baseVersion: storeTestBaseVersion,
+      changes: [{
+        section: "currentJudgment",
+        currentValue: "The store test is running.",
+        proposedValue: "This write escaped through a swapped workspace root.",
+        rationale: "Swapped workspace roots must be rejected.",
+      }],
+      confirmationPrompt: "Apply this Working Thread update?",
+      riskLevel: "high",
+    })).rejects.toThrow(/symlink|symbolic/i);
+    await expect(readFile(outsideRecordPath, "utf8")).resolves.toBe(validRecord);
   });
 
   it("returns an empty summary list when the records directory is missing", async () => {

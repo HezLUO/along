@@ -226,6 +226,7 @@ async function ensureRecordsDirSafe(
   options: { allowMissing: boolean },
 ): Promise<boolean> {
   const pathsToCheck = [
+    path.dirname(path.dirname(path.dirname(recordsDir))),
     path.dirname(path.dirname(recordsDir)),
     path.dirname(recordsDir),
     recordsDir,
