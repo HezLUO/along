@@ -131,7 +131,7 @@ describe("Working Thread operation handlers", () => {
     expect(proposalResult.operation).toBe("proposeWorkingThreadUpdate");
     expect(proposalResult.threadId).toBe(threadId);
     expect(proposalResult.data).toMatchObject({
-      proposalId: "operation-test-thread-2026-06-22",
+      proposalId: expect.stringMatching(/^operation-test-thread-2026-06-22-[a-f0-9]{12}$/),
       threadId,
       baseLastUpdated: "2026-06-22",
       riskLevel: "medium",
@@ -156,6 +156,37 @@ describe("Working Thread operation handlers", () => {
     });
   });
 
+  it("generates distinct deterministic proposal ids for different changes", async () => {
+    const { operations, thread } = await createTempOperations();
+    const firstDraft = await operations.draftWrapUp({
+      thread,
+      sessionSummary: "First summary.",
+      judgmentChange: "First judgment.",
+    });
+    const secondDraft = await operations.draftWrapUp({
+      thread,
+      sessionSummary: "Second summary.",
+      judgmentChange: "Second judgment.",
+    });
+
+    const firstProposal = await operations.proposeWorkingThreadUpdate({
+      thread,
+      draft: firstDraft.data!,
+    });
+    const secondProposal = await operations.proposeWorkingThreadUpdate({
+      thread,
+      draft: secondDraft.data!,
+    });
+
+    expect(firstProposal.data?.proposalId).toMatch(
+      /^operation-test-thread-2026-06-22-[a-f0-9]{12}$/,
+    );
+    expect(secondProposal.data?.proposalId).toMatch(
+      /^operation-test-thread-2026-06-22-[a-f0-9]{12}$/,
+    );
+    expect(firstProposal.data?.proposalId).not.toBe(secondProposal.data?.proposalId);
+  });
+
   it("rejects write-back without explicit usable confirmation", async () => {
     const { operations, proposal } = await createTempProposal();
 
@@ -174,13 +205,54 @@ describe("Working Thread operation handlers", () => {
     });
   });
 
-  it("applies confirmed section patches and returns the updated thread", async () => {
+  it("rejects write-back when approvedAt is blank", async () => {
     const { operations, proposal } = await createTempProposal();
+
+    const result = await operations.applyConfirmedWorkingThreadUpdate({
+      proposal,
+      confirmation: {
+        ...validConfirmation(proposal),
+        approvedAt: "   ",
+      },
+    });
+
+    expect(result).toMatchObject({
+      status: "rejected",
+      operation: "applyConfirmedWorkingThreadUpdate",
+      threadId,
+    });
+  });
+
+  it("rejects write-back when confirmation baseVersion does not match proposal", async () => {
+    const { operations, proposal } = await createTempProposal();
+    const versionedProposal = {
+      ...proposal,
+      baseVersion: "version-1",
+    };
+
+    const result = await operations.applyConfirmedWorkingThreadUpdate({
+      proposal: versionedProposal,
+      confirmation: {
+        ...validConfirmation(versionedProposal),
+        baseVersion: "version-2",
+      },
+    });
+
+    expect(result).toMatchObject({
+      status: "rejected",
+      operation: "applyConfirmedWorkingThreadUpdate",
+      threadId,
+    });
+  });
+
+  it("applies confirmed section patches and returns the updated thread", async () => {
+    const { operations, proposal, store } = await createTempProposal();
 
     const result = await operations.applyConfirmedWorkingThreadUpdate({
       proposal,
       confirmation: validConfirmation(proposal),
     });
+    const persisted = await store.readThread(threadId);
 
     expect(result).toMatchObject({
       status: "ok",
@@ -194,6 +266,9 @@ describe("Working Thread operation handlers", () => {
         },
       },
     });
+    expect(persisted.thread?.currentJudgment).toBe(
+      "Action-only handlers are ready to implement.",
+    );
   });
 
   it("returns a stale conflict when the record changed before confirmed apply", async () => {
@@ -249,7 +324,7 @@ async function createTempOperations() {
 }
 
 async function createTempProposal() {
-  const { operations, recordsDir, thread } = await createTempOperations();
+  const { operations, recordsDir, store, thread } = await createTempOperations();
   const draftResult = await operations.draftWrapUp({
     thread,
     sessionSummary: "The operation handlers now have a concrete test target.",
@@ -271,6 +346,7 @@ async function createTempProposal() {
     operations,
     proposal: proposalResult.data,
     recordsDir,
+    store,
   };
 }
 

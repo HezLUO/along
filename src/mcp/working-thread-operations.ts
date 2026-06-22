@@ -1,3 +1,4 @@
+import { createHash } from "node:crypto";
 import type {
   ApplyConfirmedWorkingThreadUpdateInput,
   ApplyConfirmedWorkingThreadUpdateResult,
@@ -133,7 +134,7 @@ function proposeWorkingThreadUpdate(
 ): ProposeWorkingThreadUpdateResult {
   const changes = buildSectionChanges(input.thread, input.draft);
   const proposal: WorkingThreadUpdateProposal = {
-    proposalId: buildProposalId(input.thread),
+    proposalId: buildProposalId(input.thread, changes),
     threadId: input.thread.id,
     baseLastUpdated: input.thread.lastUpdated,
     changes,
@@ -285,8 +286,14 @@ function getInvalidConfirmationReason(
   if (confirmation.baseLastUpdated !== proposal.baseLastUpdated) {
     return "Confirmation baseLastUpdated does not match the proposal.";
   }
+  if (confirmation.baseVersion !== proposal.baseVersion) {
+    return "Confirmation baseVersion does not match the proposal.";
+  }
   if (confirmation.approvedBy !== "user") {
     return "Confirmation must be approved by the user.";
+  }
+  if (!confirmation.approvedAt.trim()) {
+    return "Confirmation approvedAt is required.";
   }
   if (!confirmation.sourceSessionId.trim()) {
     return "Confirmation sourceSessionId is required.";
@@ -321,8 +328,25 @@ async function readCurrentThreadSummary(
   }
 }
 
-function buildProposalId(thread: WorkingThread): string {
-  return `${thread.id}-${thread.lastUpdated}`;
+function buildProposalId(
+  thread: WorkingThread,
+  changes: WorkingThreadSectionChange[],
+): string {
+  const digest = createHash("sha256")
+    .update(canonicalizeProposalChanges(changes))
+    .digest("hex")
+    .slice(0, 12);
+
+  return `${thread.id}-${thread.lastUpdated}-${digest}`;
+}
+
+function canonicalizeProposalChanges(changes: WorkingThreadSectionChange[]): string {
+  return JSON.stringify(changes.map((change) => ({
+    currentValue: change.currentValue,
+    proposedValue: change.proposedValue,
+    rationale: change.rationale,
+    section: change.section,
+  })));
 }
 
 function normalizeText(value: string): string {
@@ -334,7 +358,11 @@ function containsSignal(text: string, signal: string): boolean {
 }
 
 function isStaleError(error: unknown): boolean {
-  return getErrorMessage(error).toLowerCase().includes("stale");
+  const message = getErrorMessage(error);
+  return (
+    message.startsWith("Stale Working Thread proposal ") ||
+    message.includes("record changed before write")
+  );
 }
 
 function getErrorMessage(error: unknown): string {
