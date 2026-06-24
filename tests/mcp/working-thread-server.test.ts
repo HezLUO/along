@@ -283,6 +283,7 @@ const parsedThread: ParsedWorkingThreadDocument = {
       currentJudgment: "Keep MCP surface minimal.",
     },
   },
+  appendices: [],
   thread,
 };
 

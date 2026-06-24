@@ -31,6 +31,13 @@ export interface PartialWorkingThreadDocument {
   sections: Partial<Record<WorkingThreadSection, string>>;
 }
 
+export interface WorkingThreadAppendix {
+  heading: string;
+  markdown: string;
+  startOffset: number;
+  endOffset: number;
+}
+
 export interface ParsedWorkingThreadDocument {
   id: string;
   sourcePath: string;
@@ -38,6 +45,7 @@ export interface ParsedWorkingThreadDocument {
   malformed: boolean;
   warnings: WorkingThreadParseWarning[];
   partial: PartialWorkingThreadDocument;
+  appendices: WorkingThreadAppendix[];
   thread?: WorkingThread;
 }
 
@@ -78,7 +86,7 @@ export function parseWorkingThreadMarkdown(
   const metadataBlock = getTopLevelMetadataBlock(input.markdown);
   const status = metadataBlock.match(/^Status:\s*(.+?)\s*$/m)?.[1]?.trim();
   const lastUpdated = metadataBlock.match(/^Last updated:\s*(.+?)\s*$/m)?.[1]?.trim();
-  const sections = parseSections(input.markdown, warnings);
+  const { sections, appendices } = parseSections(input.markdown, warnings);
   addSetextHeadingWarnings(input.markdown, warnings);
 
   if (title) {
@@ -139,6 +147,7 @@ export function parseWorkingThreadMarkdown(
       malformed: true,
       warnings,
       partial,
+      appendices,
     };
   }
 
@@ -149,6 +158,7 @@ export function parseWorkingThreadMarkdown(
     malformed: false,
     warnings,
     partial,
+    appendices,
     thread,
   };
 }
@@ -269,40 +279,96 @@ function getTopLevelMetadataBlock(markdown: string): string {
 function parseSections(
   markdown: string,
   warnings: WorkingThreadParseWarning[],
-): Map<WorkingThreadSection, string[]> {
+): {
+  sections: Map<WorkingThreadSection, string[]>;
+  appendices: WorkingThreadAppendix[];
+} {
   const sections = new Map<WorkingThreadSection, string[]>();
+  const appendices: WorkingThreadAppendix[] = [];
   const headingRegex = /^ {0,3}(#{1,6})\s+(.+?)\s*$/gm;
   const headings = [...markdown.matchAll(headingRegex)];
+  const consumedAppendixHeadingIndexes = new Set<number>();
 
   for (let index = 0; index < headings.length; index += 1) {
-    const heading = headings[index];
-    const marker = heading[1] ?? "";
-    const headingText = heading[2] ?? "";
-    if (marker === "#" && heading.index !== undefined && isDocumentTitleHeading(markdown, heading.index)) {
+    if (consumedAppendixHeadingIndexes.has(index)) {
       continue;
     }
 
+    const heading = headings[index];
+    const marker = heading[1] ?? "";
+    const headingText = heading[2] ?? "";
+    const headingIndex = heading.index;
+    if (headingIndex === undefined) {
+      continue;
+    }
+
+    if (marker === "#" && isDocumentTitleHeading(markdown, headingIndex)) {
+      continue;
+    }
+
+    const headingEnd = headingIndex + heading[0].length;
+    const nextHeading = headings[index + 1];
+    const sectionEnd = nextHeading?.index ?? markdown.length;
+    const body = markdown.slice(headingEnd, sectionEnd).trim();
     const section = marker === "##"
       ? headingSections.get(normalizeHeading(headingText))
       : undefined;
-    if (!section || heading.index === undefined) {
-      warnings.push({
-        code: "unknown-section",
-        message: `Unknown Working Thread section heading: ${headingText.trim()}.`,
+
+    if (section) {
+      const existing = sections.get(section) ?? [];
+      existing.push(body);
+      sections.set(section, existing);
+      continue;
+    }
+
+    if (marker === "##" && isCanonicalCoreComplete(sections)) {
+      const nextAppendixHeadingIndex = findNextLevelTwoHeadingIndex(headings, index + 1);
+      const appendixEnd = nextAppendixHeadingIndex === undefined
+        ? markdown.length
+        : headings[nextAppendixHeadingIndex]?.index ?? markdown.length;
+      for (
+        let appendixIndex = index + 1;
+        appendixIndex < (nextAppendixHeadingIndex ?? headings.length);
+        appendixIndex += 1
+      ) {
+        consumedAppendixHeadingIndexes.add(appendixIndex);
+      }
+
+      appendices.push({
+        heading: headingText.trim(),
+        markdown: markdown.slice(headingEnd, appendixEnd).trim(),
+        startOffset: headingIndex,
+        endOffset: appendixEnd,
       });
       continue;
     }
 
-    const headingEnd = heading.index + heading[0].length;
-    const nextHeading = headings[index + 1];
-    const sectionEnd = nextHeading?.index ?? markdown.length;
-    const body = markdown.slice(headingEnd, sectionEnd).trim();
-    const existing = sections.get(section) ?? [];
-    existing.push(body);
-    sections.set(section, existing);
+    warnings.push({
+      code: "unknown-section",
+      message: `Unknown Working Thread section heading: ${headingText.trim()}.`,
+    });
   }
 
-  return sections;
+  return { sections, appendices };
+}
+
+function isCanonicalCoreComplete(
+  sections: Map<WorkingThreadSection, string[]>,
+): boolean {
+  return workingThreadSections.every((section) => (sections.get(section) ?? []).length > 0);
+}
+
+function findNextLevelTwoHeadingIndex(
+  headings: RegExpMatchArray[],
+  startIndex: number,
+): number | undefined {
+  for (let index = startIndex; index < headings.length; index += 1) {
+    if ((headings[index]?.[1] ?? "") === "##") {
+      return index;
+    }
+  }
+
+  return undefined;
 }
 
 function assignSectionValue(
@@ -408,7 +474,9 @@ function addSetextHeadingWarnings(
   markdown: string,
   warnings: WorkingThreadParseWarning[],
 ): void {
-  const lines = markdown.split(/\r?\n/);
+  const coreEnd = findCanonicalCoreEnd(markdown);
+  const coreMarkdown = coreEnd === undefined ? markdown : markdown.slice(0, coreEnd);
+  const lines = coreMarkdown.split(/\r?\n/);
   for (let index = 1; index < lines.length; index += 1) {
     const line = lines[index] ?? "";
     const previousLine = lines[index - 1] ?? "";
@@ -419,6 +487,11 @@ function addSetextHeadingWarnings(
       });
     }
   }
+}
+
+function findCanonicalCoreEnd(markdown: string): number | undefined {
+  const openQuestionsRanges = findSectionRange(markdown, "openQuestions");
+  return openQuestionsRanges.length === 1 ? openQuestionsRanges[0].bodyEnd : undefined;
 }
 
 function isDocumentTitleHeading(markdown: string, headingIndex: number): boolean {
