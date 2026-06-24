@@ -104,6 +104,11 @@ The Core/MCP Minimal Server Design spec at `docs/superpowers/specs/2026-06-21-al
 
 The Core/MCP Minimal Server was implemented as a docs-backed stdio MCP server under `src/mcp/`. It exposes Working Thread summaries and records as resources and action-only tools for drift classification, wrap-up drafting, update proposals, and confirmed section-patch write-back. Verification passed targeted MCP tests, contract tests, typecheck, build, and full tests. This pass did not add HTTP/SSE transport, background runtime, `.along/` state, LLM calls, prompts, adapters, Memory v2, relationship modes, delegation, or full-file rewrites.
 
+## Open Questions
+
+- Is the medium-drift answer length acceptable, or should the skill push more concise first replies?
+- What should the plugin promise to users without overselling background self-initiation?
+
 ## Validation Notes
 
 2026-06-20 first screenshot-based validation partially passed:
@@ -393,8 +398,3 @@ V1 packaging should be a distribution copy, not a source-of-truth migration:
 - Preserve current validated repo behavior while testing plugin install and discovery.
 - Add validation or review steps to detect meaningful drift between the repo skill and packaged skill.
 - Revisit source-of-truth consolidation only after personal plugin validation passes.
-
-## Open Questions
-
-- Is the medium-drift answer length acceptable, or should the skill push more concise first replies?
-- What should the plugin promise to users without overselling background self-initiation?
