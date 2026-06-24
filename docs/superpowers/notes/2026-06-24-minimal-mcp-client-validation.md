@@ -196,3 +196,20 @@ Decision to make:
 - Allow selected extra sections as non-mutated appendices while still preserving safe section-patch write-back.
 
 Until that decision is made, the server should remain as implemented and should not be expanded into runtime, adapters, presence, or broader packaging.
+
+## Schema Alignment Follow-Up
+
+Date: 2026-06-24
+
+The Working Thread schema alignment pass resolved the real-record malformed blocker.
+
+Result:
+
+- The active Working Thread record now keeps the canonical core before appendix sections.
+- The parser treats appendix sections after the canonical core as read-only context.
+- The active record parses as a complete `WorkingThread`.
+- MCP resources can expose both the structured core and appendix-preserved full record context.
+- Confirmed write-back remains limited to canonical sections.
+- No new MCP tools, prompts, transports, runtime behavior, adapters, presence, or `.along/` state were added.
+
+This resolves the schema/content alignment blocker found during the first MCP client validation. It does not change the broader product conclusion: Along still has turn-bound, docs-backed continuity, not background autonomy or living presence.

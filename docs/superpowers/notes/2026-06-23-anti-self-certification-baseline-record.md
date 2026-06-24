@@ -597,6 +597,22 @@ Next recommended gate:
 
 Run a small Working Thread schema alignment decision before any further MCP expansion. Decide whether V1 should keep records strict and move extra material to separate notes, or allow selected appendices without making the record malformed.
 
+## Round 5 Result: Working Thread Schema Alignment
+
+Completed on 2026-06-24.
+
+Result:
+
+- The schema/content mismatch found in Minimal MCP client validation was resolved.
+- Canonical Working Thread sections remain strict and writable only through confirmed section patches.
+- Appendix sections are allowed after the canonical core as read-only context.
+- The active Working Thread record was aligned so `Open Questions` is part of the canonical core before appendices begin.
+- This pass did not add new MCP capability, runtime behavior, background autonomy, presence, adapters, delegation, Memory v2, or `.along/` state.
+
+Interpretation:
+
+This improves MCP usability against real project records without changing the evidence hierarchy. It proves the docs-backed MCP layer can handle long-running Working Thread records more realistically, but it still does not prove true self-initiation or companion presence.
+
 ## Update Rule
 
 Keep this record updated after each evaluation round. Updates should record:
