@@ -89,6 +89,50 @@ The metadata block was misplaced.
 - Who should repair this record?
 `;
 
+function recordWithAppendices(): string {
+  return `# Validation Thread
+
+Status: active
+Last updated: 2026-06-24
+
+## Why This Matters
+
+This record validates appendices.
+
+## Current Judgment
+
+Keep appendices read-only.
+
+## Boundary
+
+- Do not patch appendices.
+
+## Drift Triggers
+
+- The work writes outside canonical sections.
+
+## Next Likely Move
+
+Patch a canonical section.
+
+## Last Wrap-Up
+
+Appendix validation is pending.
+
+## Open Questions
+
+- Will appendices be preserved?
+
+## Validation Notes
+
+This appendix must remain unchanged.
+
+### Evidence
+
+Nested appendix content must also remain unchanged.
+`;
+}
+
 const storeTestBaseVersion = getBaseVersion("store-test-thread", validRecord);
 const tempRoots: string[] = [];
 
@@ -201,6 +245,44 @@ describe("Working Thread docs store", () => {
 
     expect(result.thread?.currentJudgment).toBe("The store patch was applied.");
     expect(updatedFile).toContain("The store patch was applied.");
+  });
+
+  it("applies confirmed section patches while preserving appendices", async () => {
+    const { recordsDir, store } = await createTempStore({
+      "validation-thread.md": recordWithAppendices(),
+    });
+    const parsed = await store.readThread("validation-thread");
+    expect(parsed.malformed).toBe(false);
+    expect(parsed.thread).toBeDefined();
+
+    const proposal = {
+      proposalId: "validation-thread-proposal",
+      threadId: "validation-thread",
+      baseLastUpdated: "2026-06-24",
+      baseVersion: buildWorkingThreadBaseVersion(parsed.thread!),
+      changes: [
+        {
+          section: "lastWrapUp",
+          currentValue: "Appendix validation is pending.",
+          proposedValue: "Appendix validation passed.",
+          rationale: "Only canonical sections should change.",
+        },
+      ],
+      confirmationPrompt: "Confirm this Working Thread update before any write-back is applied.",
+      riskLevel: "low",
+    } satisfies WorkingThreadUpdateProposal;
+
+    await store.applySectionPatchProposal(proposal);
+
+    const markdown = await readFile(
+      path.join(recordsDir, "validation-thread.md"),
+      "utf8",
+    );
+    expect(markdown).toContain("Appendix validation passed.");
+    expect(markdown).toContain("## Validation Notes");
+    expect(markdown).toContain("This appendix must remain unchanged.");
+    expect(markdown).toContain("### Evidence");
+    expect(markdown).toContain("Nested appendix content must also remain unchanged.");
   });
 
   it("rejects symlinked record files and leaves outside targets unchanged", async () => {
@@ -535,12 +617,16 @@ type ProposalWorkerResult =
     message: string;
   };
 
-async function createTempStore() {
+async function createTempStore(records: Record<string, string> = {
+  "store-test-thread.md": validRecord,
+}) {
   const workspaceRoot = await mkdtemp(path.join(os.tmpdir(), "working-thread-docs-store-"));
   tempRoots.push(workspaceRoot);
   const recordsDir = path.join(workspaceRoot, "docs/along/working-threads");
   await mkdir(recordsDir, { recursive: true });
-  await writeFile(path.join(recordsDir, "store-test-thread.md"), validRecord);
+  await Promise.all(Object.entries(records).map(([fileName, contents]) => (
+    writeFile(path.join(recordsDir, fileName), contents)
+  )));
   const store = createWorkingThreadDocsStore({ workspaceRoot });
 
   return {
