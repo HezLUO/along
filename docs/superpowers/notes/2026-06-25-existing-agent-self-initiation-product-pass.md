@@ -106,6 +106,7 @@ Record decisions here as the pass progresses.
 - Challenge Moment triggers: treat direction switches, pre-implementation transitions, and over-fast validation conclusions as proactive triggers. Treat explicit user requests for judgment as user-triggered challenge opportunities. Do not make general ongoing critique the default behavior.
 - Challenge Brief outcomes: support accepting the challenge, refining the challenge, dismissing it for now, and turning it into validation. Make **turn into validation** the default recommended outcome because it best expresses anti-self-certification: Along should help convert questionable judgment into lightweight evidence instead of merely trying to persuade the user.
 - Lightweight validation actions: use fresh-session checks and read-only reviews as the primary validation actions. Use user calibration for product-experience judgments such as whether a moment felt self-initiating, companion-like, annoying, or useful. Do not make implementation or write delegation part of the default validation action.
+- Minimum demo loop: support challenge before implementation, challenge on direction switch, and challenge after completion. Make **challenge after completion** the primary demo path because it targets the strongest anti-self-certification moment: implementation passed, but product validity may still be unproven.
 
 ## Next Design Question
 
