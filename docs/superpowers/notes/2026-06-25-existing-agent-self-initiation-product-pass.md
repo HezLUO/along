@@ -105,6 +105,7 @@ Record decisions here as the pass progresses.
 - Challenge Brief tone: use a variable tone with **co-creator** as the default. For higher-risk moments, shift toward a calmer reviewer tone. For companion-oriented moments, allow a warmer protective tone. Do not make emotional simulation or relationship modes part of this V1 pass.
 - Challenge Moment triggers: treat direction switches, pre-implementation transitions, and over-fast validation conclusions as proactive triggers. Treat explicit user requests for judgment as user-triggered challenge opportunities. Do not make general ongoing critique the default behavior.
 - Challenge Brief outcomes: support accepting the challenge, refining the challenge, dismissing it for now, and turning it into validation. Make **turn into validation** the default recommended outcome because it best expresses anti-self-certification: Along should help convert questionable judgment into lightweight evidence instead of merely trying to persuade the user.
+- Lightweight validation actions: use fresh-session checks and read-only reviews as the primary validation actions. Use user calibration for product-experience judgments such as whether a moment felt self-initiating, companion-like, annoying, or useful. Do not make implementation or write delegation part of the default validation action.
 
 ## Next Design Question
 
