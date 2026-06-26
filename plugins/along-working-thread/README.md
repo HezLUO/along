@@ -97,7 +97,15 @@ The verification checks:
 
 ## Fresh-session validation checklist
 
-Use a fresh Codex session in the Along project and try these prompts.
+Use a fresh Codex session in the Along project. These checks validate the current Challenge Layer stage; they do not prove background autonomy, runtime behavior, or long-term product feeling.
+
+### Recovery
+
+```text
+Please restore the current Along Working Thread and tell me what we should do next.
+```
+
+Expected: Codex reads the Working Thread record, names the current Challenge Layer judgment, and keeps the next move focused on real-use calibration rather than new implementation.
 
 ### Challenge after completion
 
@@ -107,14 +115,6 @@ The focused execution session says implementation is complete and tests passed. 
 
 Expected: Codex identifies a Challenge Moment, separates implementation success from product proof, and suggests a fresh-session check, read-only review, or user calibration before treating the result as validated.
 
-### Resume
-
-```text
-我们接下来应该做什么？
-```
-
-Expected: Codex restores the relevant Working Thread, names the current judgment, and avoids drifting into Core/MCP, runtime, Hermes, or presence work.
-
 ### Ordinary quietness
 
 ```text
@@ -123,29 +123,27 @@ Expected: Codex restores the relevant Working Thread, names the current judgment
 
 Expected: Codex answers directly without forcing Working Thread ceremony.
 
-### Medium drift
+### Direction switch
 
 ```text
-plugin packaging 以后大概会是什么样？
+Challenge Layer recovery works now. Should we move straight into Core/MCP runtime or product-validation automation?
 ```
 
-Expected: Codex may add one light boundary note, then answers without treating the question as a confirmed direction switch.
+Expected: Codex identifies a direction-switch Challenge Moment, explains why the jump may be premature, and asks for confirmation or suggests lightweight validation before planning the new direction.
 
-### High drift
+### Pre-implementation
 
 ```text
-我觉得我们现在可以直接开始做 Core/MCP 或者 plugin packaging，你怎么看？
+The Challenge Layer docs look good enough. Write an implementation plan for the next automation pass.
 ```
 
-Expected: Codex identifies this as a high-impact direction shift and asks for confirmation before planning the drifted direction.
+Expected: Codex identifies a pre-implementation Challenge Moment and suggests narrowing the validation brief before writing an implementation plan.
 
-### Confirmed direction switch write-back
+### User calibration
 
-```text
-我确认切到 plugin packaging。接下来呢？
-```
+After a Challenge Brief appears, rate usefulness, self-initiation, co-creator feel, and annoyance.
 
-Expected: Codex drafts or proposes a bounded Working Thread update first, asks before durable write-back, and does not jump directly into implementation.
+Expected: Codex treats user calibration as product evidence, not as permission to expand runtime, adapter, presence, or automation scope.
 
 ## Roadmap boundaries
 

@@ -382,7 +382,8 @@ describe("Along Working Thread repo-contained plugin package", () => {
     expect(readme).toContain("not a replacement for Codex, Hermes, Claude Code, or other agents");
     expect(readme).toContain("npm run verify:plugin-package");
     expect(readme).toContain("Fresh-session validation checklist");
-    expect(readme).toContain("我确认切到 plugin packaging。接下来呢？");
+    expect(readme).toContain("Please restore the current Along Working Thread");
+    expect(readme).toContain("rate usefulness, self-initiation, co-creator feel, and annoyance");
 
     expect(version).toContain("# Along Working Thread 0.1.0");
     expect(version).toContain("repo-contained source package");
