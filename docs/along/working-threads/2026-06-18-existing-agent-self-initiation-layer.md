@@ -19,6 +19,8 @@ The Core/MCP Minimal Server is now implemented as a real but extremely small doc
 
 Challenge Layer is now implemented and fast-forward merged into `main` at `ebf9ab3`. The implementation is skill/plugin documentation plus validation tests only; it adds Challenge Moment, Challenge Brief, anti-self-certification, and lightweight validation behavior without adding runtime, UI, adapters, MCP tools/resources/prompts, `.along/` state, write delegation, or automatic execution. Fresh-session scenario checks were positive for completion challenge, Core/MCP direction-switch challenge, and pre-implementation challenge, but this is still simulated product validation rather than proof of long-term real-use product feeling.
 
+The local personal plugin source and Codex personal plugin cache have been synced to the merged Challenge Layer package. A first new-session recovery validation partially passed: the fresh session loaded the Along Working Thread skill/reference, recovered the active Challenge Layer stage from source-thread context, and correctly treated the result as a partial signal rather than a full product validation. The local command layer was blocked by `Too many open files`, so repo-file recovery from a clean new session still needs a resource-normal retest.
+
 Long-term positioning is now approved: Along should become a local-first, open-source, existing-agent companion layer. It should help the agents users already rely on gain continuity, turn-bound self-initiation, drift awareness, wrap-up discipline, and eventually deeper companionship. It should not present itself as another general coding agent.
 
 ## Boundary
@@ -411,3 +413,11 @@ V1 packaging should be a distribution copy, not a source-of-truth migration:
 - Preserve current validated repo behavior while testing plugin install and discovery.
 - Add validation or review steps to detect meaningful drift between the repo skill and packaged skill.
 - Revisit source-of-truth consolidation only after personal plugin validation passes.
+
+2026-06-26 personal plugin/cache sync and recovery validation signal:
+
+- The repo-contained `plugins/along-working-thread` package was copied into `/Users/james/plugins/along-working-thread` and `/Users/james/.codex/plugins/cache/personal/along-working-thread/0.1.0`.
+- Diff checks showed the repo package, personal plugin source, and Codex cache copy were aligned after sync.
+- A fresh validation thread loaded the `along-working-thread` skill and v1 reference, then recovered the current stage as Challenge Layer real-use validation.
+- The fresh thread also produced the correct Challenge Brief: do not treat skill loading as proof that full Working Thread recovery experience is validated.
+- The validation was incomplete because local commands were blocked by `Too many open files`; repeat a clean new-session recovery test after the resource issue clears.
