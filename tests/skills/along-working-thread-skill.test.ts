@@ -281,7 +281,7 @@ describe("Along Working Thread repo-contained plugin package", () => {
     );
     expect(manifest.interface.displayName).toBe("Along Working Thread");
     expect(manifest.interface.shortDescription).toBe(
-      "A continuity-aware co-creator for active Codex sessions.",
+      "A Challenge Layer and continuity-aware co-creator for active Codex sessions.",
     );
     expect(manifest.interface.longDescription).toContain("turn-bound self-initiation");
     expect(manifest.interface.longDescription).toContain("not background autonomy");
@@ -291,6 +291,8 @@ describe("Along Working Thread repo-contained plugin package", () => {
       "Resume the current Working Thread.",
       "Help me wrap up this phase.",
       "Check whether this direction drifts from our thread.",
+      "Check whether this is a self-certification moment.",
+      "Turn this challenge into a lightweight validation.",
     ]);
 
     for (const forbiddenPath of [
@@ -384,7 +386,7 @@ describe("Along Working Thread repo-contained plugin package", () => {
 
     expect(version).toContain("# Along Working Thread 0.1.0");
     expect(version).toContain("repo-contained source package");
-    expect(version).toContain("not a capability upgrade");
+    expect(version).toContain("not a runtime capability upgrade");
     expect(version).toContain("Do not bump to 0.2.0");
   });
 });
