@@ -230,6 +230,18 @@ describe("Along Working Thread Codex skill", () => {
     }
 
     expect(reference).toContain("visible product progress or internal preparation");
+    for (const expected of [
+      "stable target-project overall progress bar",
+      "current-stage sub-progress bar",
+      "Do not generate a new overall progress bar every time.",
+      "Do not hardcode Navi's own stages when the user is asking about a different target project.",
+      "If no stable project-level stage sequence exists yet",
+    ]) {
+      expect(reference).toContain(expected);
+    }
+
+    expect(skill).toContain("stable target-project overall progress bar");
+    expect(skill).toContain("current-stage sub-progress bar");
     expect(reference).toContain("Challenge Moment becomes the escalation behavior when the map reveals risk");
     expect(reference).toContain("Navi helps the user supervise whether the agent's professional judgment is reliable enough to continue.");
     expect(reference).toContain("claim it can automatically decide the final correct answer in every domain");
@@ -438,6 +450,8 @@ describe("Along Working Thread repo-contained plugin package", () => {
     expect(readme).toContain("接下来我们应该做什么？");
     expect(readme).toContain("现在做到哪了？我看不懂。");
     expect(readme).toContain("继续吧。");
+    expect(readme).toContain("stable target-project overall progress bar");
+    expect(readme).toContain("current-stage sub-progress bar");
     expect(readme).toContain("这个方案可以吗？我不懂技术。");
     expect(readme).toContain("pre-approval check");
 
