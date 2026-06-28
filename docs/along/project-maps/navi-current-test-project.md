@@ -29,9 +29,11 @@ Recent local sub-progress:
 
 ```text
 [发现总体地图漂移] -> [记录 confirmed Project Map] -> [复测] -> [push] -> [继续真实校准]
-                              ^
-                           当前小步
+                                                                      ^
+                                                                   当前小步
 ```
+
+This sub-progress is a calibration/debugging record for Navi's own test project. It is not a user-facing product roadmap; future user projects should define their own target-project stages and use this record only as an example of stable-map behavior.
 
 ## visible_evidence
 
