@@ -2,12 +2,13 @@
 
 `0.1.0` is the current turn-bound self-initiation, Navi Progress Map, and Challenge Layer package version.
 
-This pass documents Navi as the customer-facing Progress Map behavior for non-expert progress and next-step questions. It is not a runtime capability upgrade.
+This pass documents Navi as the customer-facing Progress Map behavior for non-expert progress and next-step questions, including Rhythm Map behavior for flowing long-running projects. It is a documentation-only behavior update, not a runtime capability upgrade.
 
 The package continues to provide:
 
 - Working Thread resume inside active Codex sessions;
 - Navi Progress Maps for progress, next-step, continue, and confusion questions from non-expert users;
+- Rhythm Maps for flowing long-running projects with recurring cycles, parallel opportunities, external feedback, and user decision gates;
 - ordinary request quietness;
 - medium-drift boundary notes;
 - high-impact drift confirmation;

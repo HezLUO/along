@@ -28,6 +28,18 @@ Project Map source priority is: the map the user just confirmed, the active Work
 
 When a reliable Project Map exists, Navi should render a compact horizontal progress strip and explain the current position in plain language. In the current chat-only version, "graphical" means a text-rendered single-line stage strip with a current-position marker, not a bitmap image or UI widget. If the map is unreliable, Navi must not draw a confident stable bar; it should inspect the source of truth or mark any provisional map as awaiting confirmation.
 
+For flowing long-running projects, Navi should use a **Rhythm Map** instead of forcing a one-way overall progress bar. Flowing projects include internship-style project work, Hong Kong application-style project work, weekly refresh cycles, daily preparation loops, waiting for external feedback, parallel opportunities, and decision gates.
+
+A Rhythm Map should show:
+
+1. the recurring project rhythm;
+2. the current active track;
+3. what is waiting on outside evidence;
+4. the next small loop;
+5. the decision gate the user must confirm.
+
+For a whole long-running project, use the Rhythm Map. For a bounded subtask inside that project, such as a form-filling sequence, use the narrowest useful map, including a linear subtask strip when that is clearer. Navi should not force a one-way overall progress bar when the project is actually a recurring cycle.
+
 A Progress Map should cover:
 
 1. Current position;
@@ -176,6 +188,8 @@ Expected: Codex treats this as a pre-approval check rather than giving a simple 
 Stable bar note: The overall progress bar should describe the user's target project, not Navi's own implementation stages. Local concerns or fixes should appear in a current-stage sub-progress bar when useful.
 
 Graphical progress note: The map should use the stable Project Map source priority and render a compact horizontal progress strip when a reliable target-project stage sequence exists. The stage sequence should appear as a single-line stage strip when the chat surface can fit it; Codex should not split the overall stage sequence across multiple lines just because it is long. The current-position marker must be followed by a plain-language explanation of what that stage is doing. If the source is unreliable or inferred from logs, Codex should say it needs the project record, active plan, or user confirmation and must not draw a confident stable bar. A provisional map is acceptable only when clearly labeled as awaiting confirmation.
+
+Rhythm Map note: For flowing long-running projects, fresh-session validation should check that Codex does not force a single overall completion path. In an internship-style project, `接下来我们应该做什么？` should produce a Rhythm Map that distinguishes weekly refresh, daily preparation, waiting for external feedback, and a decision gate. In a Hong Kong application-style project, the whole project should use a Rhythm Map, while a bounded form-filling subtask may use a linear subtask strip.
 
 ### Challenge after completion
 
