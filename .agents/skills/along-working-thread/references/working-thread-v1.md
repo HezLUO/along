@@ -293,6 +293,12 @@ Current-stage sub-progress:
 
 The sub-progress bar answers: what is happening inside the current target-project stage? Local concerns, fixes, retests, and follow-up tasks belong in the sub-progress bar; they should not become new overall project stages.
 
+For orientation prompts, render the overall map first. The stable project-level map answers where the user's target project stands. If local work inside the current stage matters, current-stage internal progress is the second layer.
+
+Sub-progress must not be shown alone for orientation prompts such as `接下来我们应该做什么？`, `现在做到哪了？我看不懂。`, broad "what next" questions, or mixed questions like "are these steps done, and what should we do next?" Showing only the local strip in those cases makes the user lose the stable project coordinate and can look like the overall map changed.
+
+Only show current-stage internal progress alone when the user explicitly asks about a local task, such as a specific commit, validation run, four-step checklist, or subtask status, or when the stable overall map was just shown and has not changed. In those cases, say that the overall stage is unchanged if there is any chance of confusion.
+
 Every marked current position must be followed by a plain-language explanation of what that stage is doing, why it matters, what comes next, and what the user needs to confirm. Do not use internal labels alone, such as "write skill/reference" or "implementation pass", without translating what that stage means for the user's goal.
 
 For progress and next-step orientation questions, include a compact horizontal stage bar when the current stage sequence can be inferred. This applies to questions like "where are we", "what should we do next", `现在做到哪了？我看不懂。`, and `接下来我们应该做什么？`. If no stable project-level stage sequence exists yet, do not invent stages; say which source is needed, such as the project record, active plan, or user confirmation.

@@ -349,6 +349,35 @@ describe("Along Working Thread Codex skill", () => {
     expect(skill).toContain("plain-language explanation");
   });
 
+  it("documents two-layer map defaults and local-only exceptions", async () => {
+    const skill = await readRepoText(".agents/skills/along-working-thread/SKILL.md");
+    const reference = await readRepoText(".agents/skills/along-working-thread/references/working-thread-v1.md");
+    const readme = await readRepoText("plugins/along-working-thread/README.md");
+
+    const normalizedReference = reference.toLowerCase();
+    const normalizedSkill = skill.toLowerCase();
+    const normalizedReadme = readme.toLowerCase();
+
+    for (const expected of [
+      "overall map first",
+      "sub-progress must not be shown alone for orientation prompts",
+      "current-stage internal progress is the second layer",
+      "Only show current-stage internal progress alone when the user explicitly asks about a local task",
+      "or when the stable overall map was just shown and has not changed",
+    ]) {
+      expect(normalizedReference).toContain(expected.toLowerCase());
+    }
+
+    for (const expected of [
+      "overall map first",
+      "sub-progress must not be shown alone",
+      "local-only progress questions may use the current-stage internal strip by itself",
+    ]) {
+      expect(normalizedSkill).toContain(expected.toLowerCase());
+      expect(normalizedReadme).toContain(expected.toLowerCase());
+    }
+  });
+
   it("documents Navi Rhythm Map behavior for flowing projects", async () => {
     const skill = await readRepoText(".agents/skills/along-working-thread/SKILL.md");
     const reference = await readRepoText(".agents/skills/along-working-thread/references/working-thread-v1.md");

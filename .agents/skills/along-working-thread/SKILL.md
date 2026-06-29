@@ -68,6 +68,8 @@ Before acting on a Working Thread, read:
 - when a reliable Project Map exists, render progress and next-step orientation as a compact horizontal progress strip: a single-line stage strip plus a current-position marker and a plain-language explanation.
 - if the Project Map is unreliable, Navi must not draw a confident stable bar; it may give a provisional map only when clearly marked as awaiting confirmation.
 - local concerns, fixes, retests, and follow-up tasks should appear in a current-stage sub-progress bar, not as new overall project stages.
+- for orientation prompts, render the overall map first; current-stage internal progress is the second layer, and sub-progress must not be shown alone.
+- local-only progress questions may use the current-stage internal strip by itself when the user explicitly asks about a local task or the stable overall map was just shown and has not changed.
 - if no stable project-level stage sequence exists yet, say which source is needed, such as the project record, active plan, or user confirmation, instead of inventing stages.
 - for progress and next-step orientation questions, such as "where are we", "what should we do next", `现在做到哪了？我看不懂。`, or `接下来我们应该做什么？`, include a compact horizontal stage bar when the current stage sequence can be inferred.
 - Challenge Moment becomes the escalation behavior when the map reveals risk; it should appear inside the map rather than as a separate lecture.
