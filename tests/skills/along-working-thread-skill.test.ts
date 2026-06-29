@@ -580,11 +580,13 @@ describe("Along Working Thread repo-contained plugin package", () => {
       version: string;
       description: string;
       skills: string;
+      author: { name: string };
       keywords: string[];
       interface: {
         displayName: string;
         shortDescription: string;
         longDescription: string;
+        developerName: string;
         category: string;
         capabilities: string[];
         defaultPrompt: string[];
@@ -594,11 +596,13 @@ describe("Along Working Thread repo-contained plugin package", () => {
     expect(manifest.name).toBe("along-working-thread");
     expect(manifest.version).toBe("0.1.0");
     expect(manifest.skills).toBe("./skills/");
+    expect(manifest.author.name).toBe("Along Working Thread Contributors");
     expect(manifest.description).toContain("Working Thread continuity");
     expect(manifest.keywords).toEqual(
       expect.arrayContaining(["along", "working-thread", "continuity", "codex", "self-initiation"]),
     );
     expect(manifest.interface.displayName).toBe("Along Working Thread");
+    expect(manifest.interface.developerName).toBe("Along Working Thread Contributors");
     expect(manifest.interface.shortDescription).toBe(
       "Navi Progress Maps and Challenge Layer continuity for active Codex sessions.",
     );
@@ -615,6 +619,8 @@ describe("Along Working Thread repo-contained plugin package", () => {
       "Check whether this is a self-certification moment.",
       "Turn this challenge into a lightweight validation.",
     ]);
+    const formerDeveloperName = ["Ja", "mes"].join("");
+    expect(JSON.stringify(manifest)).not.toContain(formerDeveloperName);
 
     for (const forbiddenPath of [
       "plugins/along-working-thread/.mcp.json",
