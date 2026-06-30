@@ -1,5 +1,22 @@
 # Changelog
 
+## 0.1.0-alpha.1 - 2026-06-30
+
+Navi `0.1.0-alpha.1` clarifies the product hierarchy after the first alpha release.
+
+### Changed
+
+- Clarified that Navi is the current V1 product surface of Along, not the full long-term Along product.
+- Clarified that Navi's V1 alpha behavior centers on Progress/Rhythm Maps and Challenge Layer, rather than equating Navi itself with those mechanisms.
+- Added the post-alpha backlog / roadmap covering alpha feedback, distribution improvements, future capability layers, and current non-goals.
+- Synced the Navi / Along hierarchy wording across the root README, canonical skill, repo-contained plugin package, product debt register, and package tests.
+
+### Not Included
+
+- No npm package publication.
+- No public Codex marketplace publication.
+- No runtime, UI, adapter, memory, relationship, delegation, or background autonomy expansion.
+
 ## 0.1.0-alpha - 2026-06-30
 
 Navi `0.1.0-alpha` is the first GitHub source release prepared for external readers and early testers.

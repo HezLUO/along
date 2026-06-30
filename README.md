@@ -6,7 +6,7 @@ This repository is the open-source alpha home for Navi. Navi is the current V1 p
 
 ## Alpha Status
 
-`0.1.0-alpha` is ready as a GitHub source release for developers and early testers.
+`0.1.0-alpha.1` is ready as the latest GitHub source release for developers and early testers.
 
 What is stable in this alpha:
 
@@ -121,7 +121,7 @@ The repository still contains older Along companion ideas, including local memor
 
 ## Release Notes
 
-See `CHANGELOG.md` for the `0.1.0-alpha` release notes.
+See `CHANGELOG.md` for the latest alpha release notes.
 
 ## License
 

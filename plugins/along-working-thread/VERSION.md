@@ -2,7 +2,7 @@
 
 `0.1.0` is the current turn-bound self-initiation package version. It centers Navi's V1 alpha behavior on Progress/Rhythm Maps and Challenge Layer while preserving Working Thread continuity.
 
-`0.1.0-alpha` is the GitHub source-release label for this repo-contained package. The plugin manifest remains at `0.1.0` for compatibility with the existing package id, local installs, and tests.
+`0.1.0-alpha.1` is the latest GitHub source-release label for this repo-contained package. The plugin manifest remains at `0.1.0` for compatibility with the existing package id, local installs, and tests.
 
 This pass documents Navi as Along's current V1 product surface for non-expert progress and next-step questions. Progress/Rhythm Maps and Challenge Layer are the current V1 alpha mechanisms, not the whole long-term Along product. It is a documentation-only behavior update, not a runtime capability upgrade.
 
