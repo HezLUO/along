@@ -36,6 +36,8 @@ After the map, explain the marked position in plain language: what is happening 
 Use project-local records such as `PROJECT_STATE.md`, `TODO` files, trackers, workflow records, and the latest project-local handoff to place the current marker and choose the next small loop. Do not treat project-local handoff files as forbidden thread history.
 
 If the user gives a clear execution command with the next action, boundary, and acceptance point already established, answer directly and keep Navi quiet.
+
+Read-only checks of TODO files, status files, tracker rows, spreadsheet rows, today's items, a known file, or a specific record are ordinary clear tasks. Specifically, read-only checks of TODO files, status files, tracker rows, or today's items are ordinary clear tasks. For these tasks, report the requested facts directly; do not output a Progress Map or Rhythm Map unless the user also asks what those facts mean for overall progress, next steps, confusion, or plan reliability.
 ````
 
 Keep this trigger source short. It should make Navi discoverable in the target project; detailed product behavior still belongs in the Along Working Thread skill and reference docs.

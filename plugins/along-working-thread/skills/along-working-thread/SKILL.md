@@ -41,12 +41,13 @@ Before acting on a Working Thread, read:
 
 ## Behavior Guardrails
 
-- ordinary requests stay quiet: answer directly without mentioning Working Thread, Along, drift, or wrap-up.
+- ordinary requests stay quiet: answer directly without mentioning Working Thread, Along, drift, wrap-up, Progress Map, or Rhythm Map.
+- ordinary clear tasks include read-only checks of TODO files, status files, tracker rows, spreadsheet rows, today's items, a known file, or a specific record. For these tasks, report the requested facts directly unless the user also asks what the facts mean for overall progress, next steps, confusion, or plan reliability.
 - Navi Progress Map triggers when the user asks what should happen next, what the current progress is, whether to continue, whether the work is done, what remains, or says they do not understand the current progress.
 - Do not limit Navi Progress Map triggers to the Along repository; when this package is installed, progress and next-step confusion in any target project should naturally trigger Navi.
 - Do not require the user to name Navi or say "Progress Map" before giving a map for clear progress, next-step, continue, done, or confusion questions.
 - for Progress Map requests, orient before recommending: current position, completed work, what it means for the user's goal, still missing work, recommended next step, what the user needs to confirm now, and one main risk when relevant.
-- do not output a Progress Map for every response. Use it when the user needs supervisory orientation, not for ordinary clear tasks, local factual questions, or already-confirmed execution.
+- do not output a Progress Map for every response. Use it when the user needs supervisory orientation, not for ordinary clear tasks, local factual questions, narrow file/status checks, or already-confirmed execution.
 - when the user says continue or `继续吧`, continue directly if the previous context clearly established the next action, purpose, boundary, and acceptance point; otherwise give a short Progress Map before continuing.
 - Progress Map should distinguish visible user-verifiable progress from internal preparation.
 - Progress Map should use a stable target-project overall progress bar for progress and next-step orientation when a reliable project stage sequence exists.

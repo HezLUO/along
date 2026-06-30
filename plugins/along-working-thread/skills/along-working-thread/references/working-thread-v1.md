@@ -79,7 +79,9 @@ If context is insufficient, do not invent project state. Say what can be inferre
 
 Fresh sessions should prioritize accuracy over immediate orientation. When the agent has not yet inspected the target project, it may inspect the source-of-truth before outputting the Progress Map. Do not guess a temporary stage bar just to answer faster.
 
-Do not output a Progress Map for every response. Output one when the user needs supervisory orientation: current progress, next step, whether to continue, whether the work is done, whether a plan is reliable, what they need to confirm, or when they say they do not understand. Do not output a Progress Map for ordinary clear tasks, local factual questions, already-confirmed execution, or repeated map requests when the stage has not changed.
+Do not output a Progress Map for every response. Output one when the user needs supervisory orientation: current progress, next step, whether to continue, whether the work is done, whether a plan is reliable, what they need to confirm, or when they say they do not understand. Do not output a Progress Map for ordinary clear tasks, local factual questions, narrow file/status checks, already-confirmed execution, or repeated map requests when the stage has not changed.
+
+Ordinary clear tasks include read-only checks of TODO files, status files, tracker rows, spreadsheet rows, today's items, a known file, or a specific record. For these tasks, answer the requested factual question directly and keep Navi quiet unless the user also asks what the facts mean for overall progress, next steps, confusion, or plan reliability.
 
 If the user says "continue" or `继续吧`, inspect the previous context. Continue directly when the next action, purpose, boundary, and acceptance point are already clear. If any of those are unclear, give a short Progress Map before continuing so the user understands where the work stands, what continuing will enter, and what they need to confirm.
 
@@ -140,6 +142,8 @@ When a supervised project needs reliable Navi behavior, add a short project-loca
 Use the template at `docs/along/project-maps/navi-project-trigger-template.md` as the generic starting point. Keep project-specific rhythm labels in the target project, not in the global Navi skill. The global skill defines the behavior; the project-local trigger source tells fresh agents when to apply it for that project.
 
 The project-local trigger source is a reliability layer, not a replacement for the skill. It should stay short, point to project-local records such as `PROJECT_STATE.md`, TODO files, trackers, workflow records, and handoffs, and preserve ordinary-request quietness when the user gives a clear execution command with the next action, boundary, and acceptance point already established.
+
+Project-local trigger sources should explicitly say that read-only checks of TODO files, status files, tracker rows, spreadsheet rows, today's items, a known file, or a specific record are ordinary clear tasks. They should not produce a Progress Map or Rhythm Map for those requests unless the user also asks for supervisory orientation.
 
 ### Navi Project Initialization
 

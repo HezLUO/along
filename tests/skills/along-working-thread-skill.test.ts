@@ -510,6 +510,8 @@ describe("Along Working Thread Codex skill", () => {
       "项目节奏",
       "当前主线",
       "If the user gives a clear execution command with the next action, boundary, and acceptance point already established",
+      "read-only checks of TODO files, status files, tracker rows, or today's items are ordinary clear tasks",
+      "do not output a Progress Map or Rhythm Map",
       "keep Navi quiet",
     ]) {
       expect(template).toContain(expected);

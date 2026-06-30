@@ -60,6 +60,8 @@ Do not hardcode Navi's own project stages into the target project. The installed
 
 Do not force Navi into ordinary clear execution requests. If the user gives a clear command with the next action, boundary, and acceptance point already established, keep Navi quiet.
 
+Read-only checks of TODO files, status files, tracker rows, spreadsheet rows, today's items, a known file, or a specific record are ordinary clear tasks. They should answer directly and should not produce a Progress Map or Rhythm Map unless the user also asks what those facts mean for overall progress, next steps, confusion, or plan reliability.
+
 ## Future Product Surface
 
 Future product surface can be `navi init`, `Install Navi into this project`, or an app workflow that performs the same setup:

@@ -34,7 +34,7 @@ Project-local handoff files, session logs, project state files, TODO files, trac
 
 Do not rely only on global skill auto-routing for real use. A target project can add a short project-local Navi trigger source, usually in `AGENTS.md`, so fresh sessions discover that progress, next-step, continue, confusion, and plan-reliability questions should first receive a compact Navi map. This is a reliability layer because global skill auto-routing can be inconsistent.
 
-Use `docs/along/project-maps/navi-project-trigger-template.md` as the reusable starting point. Keep project-specific rhythm labels in the target project, and keep ordinary clear execution requests quiet when the next action, boundary, and acceptance point are already established.
+Use `docs/along/project-maps/navi-project-trigger-template.md` as the reusable starting point. Keep project-specific rhythm labels in the target project, and keep ordinary clear execution requests quiet when the next action, boundary, and acceptance point are already established. Read-only checks of TODO files, status files, tracker rows, spreadsheet rows, today's items, a known file, or a specific record are ordinary clear tasks; answer them directly unless the user also asks for overall progress, next steps, confusion, or plan-reliability judgment.
 
 ### Navi project initialization
 
